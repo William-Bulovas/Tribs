@@ -140,24 +140,17 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
         grid[w + 5 * h].setClickable(false);
     }
 
-    public boolean newDialog(int guess1, int guess2){
-        answer = true;
-        new AlertDialog.Builder(this)
-                .setTitle("Select Guess")
-                .setMessage("Which guess do you want?")
-                .setPositiveButton(Integer.toString(guess1), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        answer = true;
-                    }
-                })
-                .setNegativeButton(Integer.toString(guess2), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        answer = false;
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
 
-    return answer;
+
+    public boolean getAnswer(){
+        return answer;
+    }
+
+    public void setAnswered(int count){
+        answers[count].setBackgroundColor(Color.BLUE);
+    }
+
+    public void setUnAnswered(int count){
+        answers[count].setBackgroundColor(Color.WHITE);
     }
 }

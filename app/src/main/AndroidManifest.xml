@@ -19,7 +19,9 @@
         <activity
             android:name=".Board"
             android:label="@string/title_activity_board"
-            android:parentActivityName=".StartingPage" >
+            android:parentActivityName=".StartingPage"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.app.william.tribs.StartingPage" />
