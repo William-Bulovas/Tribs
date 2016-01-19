@@ -13,7 +13,9 @@
         android:layout_height="0dp"
         android:layout_weight="2"
         android:orientation="vertical"
-        android:weightSum="5">
+        android:weightSum="5"
+        android:padding="5dp"
+        android:backgroundTint="@android:color/black">
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -181,17 +183,13 @@
         </LinearLayout>
     </LinearLayout>
 
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="1dip"
-        android:background="#000000" />
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:weightSum="4">
+        android:weightSum="4"
+        android:padding="20dp">
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="0dp"

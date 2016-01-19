@@ -68,12 +68,14 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
             for(int j = 0; j < 5; j++){
                 grid[i+ 5 *j] = (Button) findViewById(BOARD_IDS[i + 5*j]);
                 grid[i + 5 * j].setOnClickListener(this);
+                grid[i+ 5 * j].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_white));
             }
         }
 
         for(int i =0 ; i < 4; i++){
             for(int j = 0; j < 2; j++){
                 answers[i+ 4 *j] = (Button) findViewById(ANSWER_IDS[i + 4*j]);
+                answers[i+ 4 * j].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_white));
             }
         }
 
@@ -128,15 +130,15 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     }
 
     public void setButtonSelected(int w, int h){
-        grid[w + 5 * h].setBackgroundColor(Color.GREEN);
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_green));
     }
 
     public void unSetButtonSelected(int w, int h){
-        grid[w + 5 * h].setBackgroundColor(Color.WHITE);
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_white));
     }
 
     public void setButtonAnswered(int w, int h){
-        grid[w + 5 * h].setBackgroundColor(Color.BLUE);
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_blue));
         grid[w + 5 * h].setClickable(false);
     }
 
@@ -147,10 +149,10 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     }
 
     public void setAnswered(int count){
-        answers[count].setBackgroundColor(Color.BLUE);
+        answers[count].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_gold));
     }
 
     public void setUnAnswered(int count){
-        answers[count].setBackgroundColor(Color.WHITE);
+        answers[count].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_white));
     }
 }
