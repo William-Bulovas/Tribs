@@ -89,16 +89,12 @@ public class Model {
             case 2:
                 Pair<Integer, Integer> p2 = prevSelected.get(0);
                 Pair<Integer, Integer> p1 = prevSelected.get(1);
-                if (((p1.first == r + 1 || p1.first == r - 1 || p1.first == r) && (p1.second == c+ 1
-                        || p1.second == c-1 || p1.second == c) && (!(p1.first ==  r && p1.second == c)))
-                        || ((p2.first == r + 1 || p2.first == r - 1 || p2.first == r) && (p2.second == c + 1
-                        || p2.second == c - 1 || p2.second == c) && (!(p2.first ==  r && p2.second == c)))){
+                if((checkHorizontal(p1,p2, r,c) || checkVertical(p1, p2, r, c) || checkDiagonal(p1,p2, r, c)) && !(prevSelected.contains(new Pair<>(r,c)))){
                     prevSelected.add(new Pair<Integer, Integer>(r,c));
                     checkAnswer();
                     numSelected = 0;
                     prevSelected.clear();
                     add = false;
-
                 }else{
                     numSelected = 1;
                     mView.unSetButtonSelected(p1.first, p1.second);
@@ -111,6 +107,23 @@ public class Model {
         }
         if (add) prevSelected.add(new Pair<Integer, Integer>(r, c));
 
+    }
+
+    private boolean checkHorizontal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
+        return ((p1.first == p2.first) && (r == p1.first) && ((c == p1.second -1) || (c== p1.second +1) ||
+                (c == p2.second -1) || (c== p2.second + 1)));
+    }
+
+    private boolean checkVertical(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
+        return ((p1.second == p2.second) && (c == p1.second) && ((r == p1.first +1 ) || (r == p1.first -1 ) || (r == p2.first - 1) ||
+                (r == p2.first +1)));
+    }
+
+    private boolean checkDiagonal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
+        return ((((p1.first == p2.first + 1) && ((r == p1.first + 1) || (r == p2.first - 1)))
+                || ((p1.first == p2.first - 1) && ((r == p1.first - 1) || (r == p2.first + 1))))
+                && (((p1.second == p2.second +1)&& (( c == p1.second + 1) || (c == p2.second -1)))
+                || ((p1.second == p2.second - 1) && ((c == p1.second -1) || (c == p2.second + 1)))));
     }
 
     public void checkAnswer(){
