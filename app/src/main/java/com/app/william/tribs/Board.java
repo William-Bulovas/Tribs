@@ -3,6 +3,7 @@ package com.app.william.tribs;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -123,10 +124,13 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     public void setGrid(int w, int h, int val){
         grid[w+ 5 * h].setText(String.valueOf(val));
         grid[w + 5 * h].setClickable(true);
+        unSetButtonSelected(w, h);
     }
 
     public void setAnswer(int w, int h, int val){
         answers[w+ 4 * h].setText(String.valueOf(val));
+        answers[w+4 * h].setClickable(false);
+        setUnAnswered(w + 4 *h);
     }
 
     public void setButtonSelected(int w, int h){
@@ -154,5 +158,9 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
 
     public void setUnAnswered(int count){
         answers[count].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_white));
+    }
+
+    public void setAnswerUnVisible(int count){
+        answers[count].setVisibility(View.GONE);
     }
 }
