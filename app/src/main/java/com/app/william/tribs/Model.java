@@ -25,6 +25,7 @@ public class Model {
     private List<Pair<Integer, Boolean>> answers;
     private List<Integer> grid;
     private Context mContext;
+    private int numAnswered;
 
     Model(Board v, Context context){
         mView = v;
@@ -33,13 +34,13 @@ public class Model {
 
     public void startlevel(int l){
         mLevel = l;
-
+        numAnswered = 0;
         prevSelected = new ArrayList<>();
         answers = new ArrayList<> ();
         grid = new ArrayList<>();
 
         try {
-        Scanner in = new Scanner(mContext.getResources().openRawResource(R.raw.lvl1));
+        Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel - 1]));
 
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
@@ -54,7 +55,11 @@ public class Model {
             }
 
             for(int i = 0; i < 8; i++) {
-                answers.add(new Pair<>(in.nextInt(), true));
+                if(in.hasNext()) {
+                    answers.add(new Pair<>(in.nextInt(), true));
+                } else{
+                    mView.setAnswerUnVisible(i);
+                }
             }
 
             for(int i = 0; i< 4; i++){
@@ -174,6 +179,8 @@ public class Model {
             mView.setButtonAnswered(p1.first, p1.second);
             mView.setButtonAnswered(p2.first, p2.second);
             mView.setButtonAnswered(p3.first, p3.second);
+            numAnswered++;
+            checkWin();
         }else{
             mView.unSetButtonSelected(p1.first, p1.second);
             mView.unSetButtonSelected(p2.first, p2.second);
@@ -200,4 +207,15 @@ public class Model {
                 .show();
 
     }
+
+    private void checkWin(){
+        if(numAnswered == answers.size()){
+            startlevel(mLevel + 1);
+        }
+    }
+
+    private static int mLevelFiles[]={
+            R.raw.lvl1,
+            R.raw.lvl2
+    };
 }
