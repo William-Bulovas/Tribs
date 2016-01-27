@@ -1,19 +1,24 @@
 package com.app.william.tribs;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.app.ActionBar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
+import android.os.Handler;
 
 
 public class Board extends ActionBarActivity implements View.OnClickListener {
+
     private static final int[] BOARD_IDS={
             R.id.s1_1,
             R.id.s1_2,
@@ -55,12 +60,41 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     private Model model;
     private static Button grid[] = new Button[25];
     private static Button answers[] = new Button[8];
-    private boolean answer;
+    private TextView levelLbl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+
+        ActionBar actionBar= getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.level_picker, null);
+
+        actionBar.setCustomView(view);
+
+        Button nextLvl = (Button) view.findViewById(R.id.nextLvl);
+        Button preLvl = (Button) view.findViewById(R.id.prevLvl);
+
+        levelLbl = (TextView) view.findViewById(R.id.lvlTitle);
+
+        nextLvl.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                model.increaseLevel();
+            }
+        });
+
+        preLvl.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                model.decreaseLevel();
+            }
+        });
 
         grid = new Button[25];
         answers = new Button[8];
@@ -130,7 +164,7 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     public void setAnswer(int w, int h, int val){
         answers[w+ 4 * h].setText(String.valueOf(val));
         answers[w+4 * h].setClickable(false);
-        setUnAnswered(w + 4 *h);
+        setUnAnswered(w + 4 * h);
     }
 
     public void setButtonSelected(int w, int h){
@@ -146,12 +180,6 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
         grid[w + 5 * h].setClickable(false);
     }
 
-
-
-    public boolean getAnswer(){
-        return answer;
-    }
-
     public void setAnswered(int count){
         answers[count].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_gold));
     }
@@ -162,5 +190,22 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
 
     public void setAnswerUnVisible(int count){
         answers[count].setVisibility(View.GONE);
+    }
+
+    public void setTitle(int level){
+        levelLbl.setText("Level " + level);
+    }
+
+    public void setWrong(final int w, final int h){
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_red_pressed));
+        Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                unSetButtonSelected(w, h);
+            }
+        }, 100);
+
     }
 }

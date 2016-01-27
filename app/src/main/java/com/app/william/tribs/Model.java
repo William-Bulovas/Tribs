@@ -18,6 +18,7 @@ import java.util.Scanner;
  * Created by Williamv on 1/3/2016.
  */
 public class Model {
+    private int MAX_LEVEL = 5;
     private Board mView;
     private int mLevel;
     private int numSelected = 0;
@@ -33,11 +34,13 @@ public class Model {
     }
 
     public void startlevel(int l){
+        if (l > MAX_LEVEL) return;
         mLevel = l;
         numAnswered = 0;
         prevSelected = new ArrayList<>();
         answers = new ArrayList<> ();
         grid = new ArrayList<>();
+        mView.setTitle(l);
 
         try {
         Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel - 1]));
@@ -86,7 +89,7 @@ public class Model {
                         numSelected++;
                 } else{
                     numSelected = 1;
-                    mView.unSetButtonSelected(p.first, p.second);
+                    mView.setWrong(p.first, p.second);
                     prevSelected.clear();
                 }
                 mView.setButtonSelected(r,c);
@@ -102,8 +105,8 @@ public class Model {
                     add = false;
                 }else{
                     numSelected = 1;
-                    mView.unSetButtonSelected(p1.first, p1.second);
-                    mView.unSetButtonSelected(p2.first, p2.second);
+                    mView.setWrong(p1.first, p1.second);
+                    mView.setWrong(p2.first, p2.second);
                     mView.setButtonSelected(r,c);
                     prevSelected.clear();
                 }
@@ -182,8 +185,9 @@ public class Model {
             numAnswered++;
             checkWin();
         }else{
-            mView.unSetButtonSelected(p1.first, p1.second);
-            mView.unSetButtonSelected(p2.first, p2.second);
+            mView.setWrong(p1.first, p1.second);
+            mView.setWrong(p2.first, p2.second);
+            mView.setWrong(p3.first, p3.second);
         }
     }
 
@@ -214,8 +218,27 @@ public class Model {
         }
     }
 
+
+
+    public void increaseLevel(){
+        if(mLevel + 1 <= MAX_LEVEL){
+            mLevel++;
+            startlevel(mLevel);
+        }
+    }
+
+    public void decreaseLevel(){
+        if(mLevel - 1 >= 1){
+            mLevel--;
+            startlevel(mLevel);
+        }
+    }
+
     private static int mLevelFiles[]={
             R.raw.lvl1,
-            R.raw.lvl2
+            R.raw.lvl2,
+            R.raw.lvl3,
+            R.raw.lvl4,
+            R.raw.lvl5
     };
 }
