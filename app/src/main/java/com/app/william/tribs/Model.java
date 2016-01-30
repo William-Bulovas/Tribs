@@ -37,6 +37,7 @@ public class Model {
         if (l > MAX_LEVEL) return;
         mLevel = l;
         numAnswered = 0;
+        numSelected = 0;
         prevSelected = new ArrayList<>();
         answers = new ArrayList<> ();
         grid = new ArrayList<>();
@@ -60,6 +61,7 @@ public class Model {
             for(int i = 0; i < 8; i++) {
                 if(in.hasNext()) {
                     answers.add(new Pair<>(in.nextInt(), true));
+                    mView.setAnswerVisible(i);
                 } else{
                     mView.setAnswerUnVisible(i);
                 }
@@ -84,21 +86,26 @@ public class Model {
                 break;
             case 1:
                 Pair<Integer, Integer> p = prevSelected.get(0);
-                if ((p.first == r + 1 || p.first == r - 1 || p.first == r) && (p.second == c+ 1
-                    || p.second == c-1 || p.second == c) && (!(p.first ==  r && p.second == c))){
+                if (p.first ==  r && p.second == c) {
+                    add = false;
+                } else if ((p.first == r + 1 || p.first == r - 1 || p.first == r) && (p.second == c+ 1
+                    || p.second == c-1 || p.second == c) ){
                         numSelected++;
-                } else{
+                } else {
                     numSelected = 1;
                     mView.setWrong(p.first, p.second);
                     prevSelected.clear();
                 }
-                mView.setButtonSelected(r,c);
+                mView.setButtonSelected(r, c);
                 break;
             case 2:
                 Pair<Integer, Integer> p2 = prevSelected.get(0);
                 Pair<Integer, Integer> p1 = prevSelected.get(1);
-                if((checkHorizontal(p1,p2, r,c) || checkVertical(p1, p2, r, c) || checkDiagonal(p1,p2, r, c)) && !(prevSelected.contains(new Pair<>(r,c)))){
-                    prevSelected.add(new Pair<Integer, Integer>(r,c));
+                Pair<Integer, Integer> p3 = new Pair<>(r,c);
+                if(p3.equals(p1) || p3.equals(p2)){
+                    add = false;
+                }else if((checkHorizontal(p1,p2, r,c) || checkVertical(p1, p2, r, c) || checkDiagonal(p1,p2, r, c)) && !(prevSelected.contains(new Pair<>(r,c)))){
+                    prevSelected.add(p3);
                     checkAnswer();
                     numSelected = 0;
                     prevSelected.clear();

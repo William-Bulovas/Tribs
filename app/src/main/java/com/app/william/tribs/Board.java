@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.os.Handler;
 
@@ -103,7 +104,7 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
             for(int j = 0; j < 5; j++){
                 grid[i+ 5 *j] = (Button) findViewById(BOARD_IDS[i + 5*j]);
                 grid[i + 5 * j].setOnClickListener(this);
-                grid[i+ 5 * j].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_white));
+                grid[i+ 5 * j].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_blank_with_downstate));
             }
         }
 
@@ -172,7 +173,7 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     }
 
     public void unSetButtonSelected(int w, int h){
-        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_white));
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_blank_with_downstate));
     }
 
     public void setButtonAnswered(int w, int h){
@@ -190,6 +191,16 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
 
     public void setAnswerUnVisible(int count){
         answers[count].setVisibility(View.GONE);
+        if(count > 3){
+            ((LinearLayout)findViewById(R.id.answers_row_two)).invalidate();
+        }
+    }
+
+    public void setAnswerVisible(int count){
+        answers[count].setVisibility(View.VISIBLE);
+        if(count > 3){
+            ((LinearLayout)findViewById(R.id.answers_row_two)).invalidate();
+        }
     }
 
     public void setTitle(int level){
