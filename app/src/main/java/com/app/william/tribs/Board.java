@@ -57,10 +57,56 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
             R.id.a2_3,
             R.id.a2_4
     };
+    private static final int[] CONNECTOR_IDS_HORS={
+            R.id.c11_12,
+            R.id.c12_13,
+            R.id.c13_14,
+            R.id.c14_15,
+            R.id.c21_22,
+            R.id.c22_23,
+            R.id.c23_24,
+            R.id.c24_25,
+            R.id.c31_32,
+            R.id.c32_33,
+            R.id.c33_34,
+            R.id.c34_35,
+            R.id.c41_42,
+            R.id.c42_43,
+            R.id.c43_44,
+            R.id.c44_45,
+            R.id.c51_52,
+            R.id.c52_53,
+            R.id.c53_54,
+            R.id.c54_55
+    };
+    private static final int[] CONNECTOR_IDS_VER={
+            R.id.c11_21,
+            R.id.c12_22,
+            R.id.c13_23,
+            R.id.c14_24,
+            R.id.c15_25,
+            R.id.c21_31,
+            R.id.c22_32,
+            R.id.c23_33,
+            R.id.c24_34,
+            R.id.c25_35,
+            R.id.c31_41,
+            R.id.c32_42,
+            R.id.c33_43,
+            R.id.c34_44,
+            R.id.c35_45,
+            R.id.c41_51,
+            R.id.c42_52,
+            R.id.c43_53,
+            R.id.c44_54,
+            R.id.c45_55,
+    };
 
     private Model model;
     private static Button grid[] = new Button[25];
     private static Button answers[] = new Button[8];
+    private static View connectors_hor[] = new View[20];
+    private static View connectors_ver[] = new View[20];
     private TextView levelLbl;
 
     @Override
@@ -115,6 +161,11 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
             }
         }
 
+        for(int i=0; i < 20; i++){
+            connectors_hor[i] = findViewById(CONNECTOR_IDS_HORS[i]);
+            connectors_ver[i] = findViewById(CONNECTOR_IDS_VER[i]);
+        }
+
         model = new Model(this, this);
 
         model.startlevel(1);
@@ -162,10 +213,10 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
         unSetButtonSelected(w, h);
     }
 
-    public void setAnswer(int w, int h, int val){
-        answers[w+ 4 * h].setText(String.valueOf(val));
-        answers[w+4 * h].setClickable(false);
-        setUnAnswered(w + 4 * h);
+    public void setAnswer(int i, int val){
+        answers[i].setText(String.valueOf(val));
+        answers[i].setClickable(false);
+        setUnAnswered(i);
     }
 
     public void setButtonSelected(int w, int h){
@@ -218,5 +269,71 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
             }
         }, 100);
 
+    }
+
+    public void setHorsSelected(int h1, int w1, int h2, int w2){
+        int h = h1;
+        if(h2 < h1) h = h2;
+        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.parseColor("#66CD00"));
+    }
+    public void setHorsUnSelected(int h1, int w1, int h2, int w2){
+        int h = h1;
+        if(h2 < h1) h = h2;
+        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.TRANSPARENT);
+    }
+    public void setHorsUnSelected(int i){
+        connectors_hor[i].setBackgroundColor(Color.TRANSPARENT);
+    }
+    public void setHorsAnswered(int h1, int w1, int h2, int w2){
+        int h = h1;
+        if(h2 < h1) h = h2;
+        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.BLUE);
+    }
+
+    public void setHorsWrong(final int h1, final int w1, final int h2, final int w2){
+        int h = h1;
+        if(h2 < h1) h = h2;
+        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.RED);
+        Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setHorsUnSelected(h1, w1, h2, w2);
+            }
+        }, 100);
+    }
+
+    public void setVerSelected(int h1, int w1, int h2, int w2){
+        int w = w1;
+        if(w2 < w1) w = w2;
+        connectors_ver[w * 5 + h1].setBackgroundColor(Color.parseColor("#66CD00"));
+    }
+    public void setVerUnSelected(int h1, int w1, int h2, int w2){
+        int w = w1;
+        if(w2 < w1) w = w2;
+        connectors_ver[w * 5 + h1].setBackgroundColor(Color.TRANSPARENT);
+    }
+    public void setVerUnSelected(int i){
+        connectors_ver[i].setBackgroundColor(Color.TRANSPARENT);
+    }
+    public void setVerAnswered(int h1, int w1, int h2, int w2){
+        int w = w1;
+        if(w2 < w1) w = w2;
+        connectors_ver[w * 5 + h1].setBackgroundColor(Color.BLUE);
+    }
+
+    public void setVerWrong(final int h1, final int w1, final int h2, final int w2){
+        int w = w1;
+        if(w2 < w1) w = w2;
+        connectors_ver[w * 5 + h1].setBackgroundColor(Color.RED);
+        Handler handler = new Handler();
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setVerUnSelected(h1, w1, h2, w2);
+            }
+        }, 100);
     }
 }

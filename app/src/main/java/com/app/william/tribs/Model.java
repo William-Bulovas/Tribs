@@ -44,7 +44,7 @@ public class Model {
         mView.setTitle(l);
 
         try {
-        Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel - 1]));
+            Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel - 1]));
 
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
@@ -62,15 +62,15 @@ public class Model {
                 if(in.hasNext()) {
                     answers.add(new Pair<>(in.nextInt(), true));
                     mView.setAnswerVisible(i);
+                    mView.setAnswer(i, answers.get(i).first);
                 } else{
                     mView.setAnswerUnVisible(i);
                 }
             }
 
-            for(int i = 0; i< 4; i++){
-                for(int j = 0; j < 2; j++){
-                    mView.setAnswer(i,j, answers.get(i + j * 4).first);
-                }
+            for(int i = 0; i < 20; i++){
+                mView.setHorsUnSelected(i);
+                mView.setVerUnSelected(i);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +90,9 @@ public class Model {
                     add = false;
                 } else if ((p.first == r + 1 || p.first == r - 1 || p.first == r) && (p.second == c+ 1
                     || p.second == c-1 || p.second == c) ){
-                        numSelected++;
+                    numSelected++;
+                    if(checkHorizontal(p, r, c)) mView.setHorsSelected(p.first, p.second, r, c);
+                    if(checkVertical(p, r, c)) mView.setVerSelected(p.first, p.second, r, c);
                 } else {
                     numSelected = 1;
                     mView.setWrong(p.first, p.second);
@@ -114,13 +116,15 @@ public class Model {
                     numSelected = 1;
                     mView.setWrong(p1.first, p1.second);
                     mView.setWrong(p2.first, p2.second);
+                    if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
+                    if(checkVertical(p1, p2.first, p2.second)) mView.setVerWrong(p1.first, p1.second, p2.first, p2.second);
                     mView.setButtonSelected(r,c);
                     prevSelected.clear();
                 }
 
                 break;
         }
-        if (add) prevSelected.add(new Pair<Integer, Integer>(r, c));
+        if (add) prevSelected.add(new Pair<>(r, c));
 
     }
 
@@ -129,9 +133,17 @@ public class Model {
                 (c == p2.second -1) || (c== p2.second + 1)));
     }
 
+    private boolean checkHorizontal(Pair<Integer, Integer> p, int r, int c){
+        return (p.second == c && (p.first == r + 1 || p.first == r -1));
+    }
+
     private boolean checkVertical(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
         return ((p1.second == p2.second) && (c == p1.second) && ((r == p1.first +1 ) || (r == p1.first -1 ) || (r == p2.first - 1) ||
                 (r == p2.first +1)));
+    }
+
+    private boolean checkVertical(Pair<Integer, Integer> p1, int r, int c){
+        return ((p1.first == r) && (p1.second == c -1 || p1.second == c + 1));
     }
 
     private boolean checkDiagonal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
@@ -189,12 +201,24 @@ public class Model {
             mView.setButtonAnswered(p1.first, p1.second);
             mView.setButtonAnswered(p2.first, p2.second);
             mView.setButtonAnswered(p3.first, p3.second);
+            if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsAnswered(p1.first, p1.second, p2.first, p2.second);
+            if(checkHorizontal(p1, p3.first, p3.second)) mView.setHorsAnswered(p1.first, p1.second, p3.first, p3.second);
+            if(checkHorizontal(p2, p3.first, p3.second)) mView.setHorsAnswered(p2.first, p2.second, p3.first, p3.second);
+            if(checkVertical(p1, p2.first, p2.second)) mView.setVerAnswered(p1.first, p1.second, p2.first, p2.second);
+            if(checkVertical(p1, p3.first, p3.second)) mView.setVerAnswered(p1.first, p1.second, p3.first, p3.second);
+            if(checkVertical(p2, p3.first, p3.second)) mView.setVerAnswered(p2.first, p2.second, p3.first, p3.second);
             numAnswered++;
             checkWin();
         }else{
             mView.setWrong(p1.first, p1.second);
             mView.setWrong(p2.first, p2.second);
             mView.setWrong(p3.first, p3.second);
+            if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
+            if(checkHorizontal(p1, p3.first, p3.second)) mView.setHorsWrong(p1.first, p1.second, p3.first, p3.second);
+            if(checkHorizontal(p2, p3.first, p3.second)) mView.setHorsWrong(p2.first, p2.second, p3.first, p3.second);
+            if(checkVertical(p1, p2.first, p2.second)) mView.setVerWrong(p1.first, p1.second, p2.first, p2.second);
+            if(checkVertical(p1, p3.first, p3.second)) mView.setVerWrong(p1.first, p1.second, p3.first, p3.second);
+            if(checkVertical(p2, p3.first, p3.second)) mView.setVerWrong(p2.first, p2.second, p3.first, p3.second);
         }
     }
 
@@ -224,8 +248,6 @@ public class Model {
             startlevel(mLevel + 1);
         }
     }
-
-
 
     public void increaseLevel(){
         if(mLevel + 1 <= MAX_LEVEL){
