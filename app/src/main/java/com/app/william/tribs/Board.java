@@ -3,6 +3,7 @@ package com.app.william.tribs;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -108,6 +109,7 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     private static View connectors_hor[] = new View[20];
     private static View connectors_ver[] = new View[20];
     private TextView levelLbl;
+    private static String TRIBS_PREFS = "Tribs_Prefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +170,14 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
 
         model = new Model(this, this);
 
-        model.startlevel(1);
+
+        SharedPreferences preferences = getSharedPreferences(TRIBS_PREFS, 0);
+        if(preferences.getBoolean("first_time", true) || true) {
+            preferences.edit().putBoolean("first_time", false).commit();
+            model.startTutorial();
+        }else {
+            model.startlevel(1);
+        }
     }
 
     @Override

@@ -1,16 +1,28 @@
 package com.app.william.tribs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Pair;
 import android.view.View;
+
+import com.github.amlcurran.showcaseview.MaterialShowcaseDrawer;
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseDrawer;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -27,6 +39,7 @@ public class Model {
     private List<Integer> grid;
     private Context mContext;
     private int numAnswered;
+    private int coachMarksSeen;
 
     Model(Board v, Context context){
         mView = v;
@@ -42,9 +55,9 @@ public class Model {
         answers = new ArrayList<> ();
         grid = new ArrayList<>();
         mView.setTitle(l);
-
+        List<Integer> temp = new ArrayList<>();
         try {
-            Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel - 1]));
+            Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel]));
 
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
@@ -54,19 +67,31 @@ public class Model {
 
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
-                    mView.setGrid(i, j, grid.get(i + 5*j));
+                    mView.setGrid(i, j, grid.get(i + 5 * j));
                 }
             }
 
             for(int i = 0; i < 8; i++) {
                 if(in.hasNext()) {
-                    answers.add(new Pair<>(in.nextInt(), true));
+                    int j = in.nextInt();
+
+                    temp.add(j);
+                }
+            }
+
+            Collections.sort(temp);
+
+            for(int i = 0; i< 8; i++){
+                if(i < temp.size()){
+                    answers.add(new Pair<>(temp.get(i), true));
                     mView.setAnswerVisible(i);
-                    mView.setAnswer(i, answers.get(i).first);
-                } else{
+                    mView.setAnswer(i, temp.get(i));
+                }else{
                     mView.setAnswerUnVisible(i);
                 }
             }
+
+
 
             for(int i = 0; i < 20; i++){
                 mView.setHorsUnSelected(i);
@@ -263,7 +288,19 @@ public class Model {
         }
     }
 
+    public void startTutorial(){
+        startlevel(0);
+        coachMarksSeen = 0;
+
+        new TribsTutorial(mContext, this);
+    }
+
+    public boolean isBlockSelected(int i, int j){
+        return prevSelected.contains(new Pair<>(i,j));
+    }
+
     private static int mLevelFiles[]={
+            R.raw.tut,
             R.raw.lvl1,
             R.raw.lvl2,
             R.raw.lvl3,

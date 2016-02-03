@@ -15,7 +15,8 @@
             android:orientation="vertical"
             android:background="@drawable/border"
             android:layout_centerInParent="true"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:id="@+id/board">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -422,7 +423,8 @@
         android:layout_height="140dp"
         android:background="@drawable/border"
         android:layout_centerInParent="true"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:id="@+id/answers">
 
         <LinearLayout
             android:id="@+id/answers_row_one"
