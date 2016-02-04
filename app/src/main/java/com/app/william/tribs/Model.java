@@ -172,10 +172,11 @@ public class Model {
     }
 
     private boolean checkDiagonal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
-        return ((((p1.first == p2.first + 1) && ((r == p1.first + 1) || (r == p2.first - 1)))
-                || ((p1.first == p2.first - 1) && ((r == p1.first - 1) || (r == p2.first + 1))))
-                && (((p1.second == p2.second +1)&& (( c == p1.second + 1) || (c == p2.second -1)))
-                || ((p1.second == p2.second - 1) && ((c == p1.second -1) || (c == p2.second + 1)))));
+        return checkDiagonal(p1, r, c) || checkDiagonal(p2, r, c);
+    }
+
+    private boolean checkDiagonal(Pair<Integer, Integer> p1, int r, int c){
+        return (p1.first == r + 1 || p1.first == r - 1) && (p1.second == c + 1 || p1.second == c -1);
     }
 
     public void checkAnswer(){

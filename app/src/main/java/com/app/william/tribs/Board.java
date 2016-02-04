@@ -272,7 +272,11 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     }
 
     public void setTitle(int level){
-        levelLbl.setText("Level " + level);
+        if(level ==0) {
+            levelLbl.setText("Tutorial");
+        }else{
+            levelLbl.setText("Level " + level);
+        }
     }
 
     public void setWrong(final int w, final int h){
