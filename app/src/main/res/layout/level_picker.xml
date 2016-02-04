@@ -10,7 +10,7 @@
         android:layout_height="25dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/arrow_unclickable"/>
+        android:background="@drawable/ic_keyboard_arrow_left_white_24dp"/>
 
     <TextView
         android:id="@+id/lvlTitle"
@@ -23,10 +23,19 @@
         android:textSize="25dp"/>
 
     <Button
+        android:id="@+id/refresh"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_toLeftOf="@+id/nextLvl"
+        android:layout_marginRight="10dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/ic_replay_white_24dp"/>
+
+    <Button
         android:id="@+id/nextLvl"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/arrow_unclickable"/>
+        android:background="@drawable/ic_keyboard_arrow_right_white_24dp"/>
 </RelativeLayout>

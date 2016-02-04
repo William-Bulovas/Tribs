@@ -263,14 +263,13 @@ public class Model {
                         mView.setAnswered(countSub);
                     }
                 })
-                .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
 
     }
 
     private void checkWin(){
         if(numAnswered == answers.size()){
-            startlevel(mLevel + 1);
+            endLevelDialog(mLevel);
         }
     }
 
@@ -288,6 +287,10 @@ public class Model {
         }
     }
 
+    public void repeatLevel(){
+        startlevel(mLevel);
+    }
+
     public void startTutorial(){
         startlevel(0);
         coachMarksSeen = 0;
@@ -297,6 +300,24 @@ public class Model {
 
     public boolean isBlockSelected(int i, int j){
         return prevSelected.contains(new Pair<>(i,j));
+    }
+
+    public void endLevelDialog(int level){
+        new AlertDialog.Builder(mContext)
+                .setTitle("Completed!")
+                .setMessage("You have completed level " + level+"!")
+                .setPositiveButton("Next Level", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                       increaseLevel();
+                    }
+                })
+                .setNegativeButton("Replay Level", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        repeatLevel();
+                    }
+                })
+                .show();
+
     }
 
     private static int mLevelFiles[]={

@@ -128,6 +128,7 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
 
         Button nextLvl = (Button) view.findViewById(R.id.nextLvl);
         Button preLvl = (Button) view.findViewById(R.id.prevLvl);
+        Button refresh = (Button) view.findViewById(R.id.refresh);
 
         levelLbl = (TextView) view.findViewById(R.id.lvlTitle);
 
@@ -142,6 +143,13 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
             @Override
             public void onClick(View v){
                 model.decreaseLevel();
+            }
+        });
+
+        refresh.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                model.repeatLevel();
             }
         });
 
