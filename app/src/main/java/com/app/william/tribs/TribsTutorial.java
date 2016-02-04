@@ -37,11 +37,13 @@ public class TribsTutorial implements OnShowcaseEventListener {
         drawer = new MaterialShowcaseDrawer(mContext.getResources());
         drawer.setBackgroundColour(Color.BLACK);
 
-        new ShowcaseView.Builder((Activity) mContext)
+        ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
                 .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
                 .setContentText(getTutText(mCoachMarkId))
-                .setContentTextPaint(mPaint)
+                .setShowcaseDrawer(drawer)
                 .setShowcaseEventListener(this).build();
+
+        s.setStyle(R.style.CustomShowcaseTheme);
     }
 
     @Override
@@ -52,10 +54,13 @@ public class TribsTutorial implements OnShowcaseEventListener {
         }
 
         completeAction(mCoachMarkId);
-        new ShowcaseView.Builder((Activity) mContext)
+        ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
                 .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
+                .setShowcaseDrawer(drawer)
                 .setContentText(getTutText(mCoachMarkId))
                 .setShowcaseEventListener(this).build();
+
+        s.setStyle(R.style.CustomShowcaseTheme);
     }
 
     @Override
