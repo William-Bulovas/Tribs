@@ -20,6 +20,7 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,9 +30,10 @@ import java.util.Scanner;
 /**
  * Created by Williamv on 1/3/2016.
  */
-public class Model {
-    private int MAX_LEVEL = 5;
-    private Board mView;
+public class Model implements Serializable{
+    private int MAX_LEVEL = 9;
+    private BoardFragment mView;
+    private Board mBoard;
     private int mLevel;
     private int numSelected = 0;
     private List<Pair<Integer, Integer>> prevSelected;
@@ -42,19 +44,21 @@ public class Model {
     private int coachMarksSeen;
 
     Model(Board v, Context context){
-        mView = v;
+        mBoard = v;
         mContext = context;
     }
 
-    public void startlevel(int l){
+    public void startlevel(int l, BoardFragment boardFragment){
         if (l > MAX_LEVEL) return;
+
+        mView = boardFragment;
         mLevel = l;
         numAnswered = 0;
         numSelected = 0;
         prevSelected = new ArrayList<>();
         answers = new ArrayList<> ();
         grid = new ArrayList<>();
-        mView.setTitle(l);
+        mBoard.setTitle(l);
         List<Integer> temp = new ArrayList<>();
         try {
             Scanner in = new Scanner(mContext.getResources().openRawResource(mLevelFiles[mLevel]));
@@ -154,8 +158,7 @@ public class Model {
     }
 
     private boolean checkHorizontal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
-        return ((p1.first == p2.first) && (r == p1.first) && ((c == p1.second -1) || (c== p1.second +1) ||
-                (c == p2.second -1) || (c== p2.second + 1)));
+        return checkHorizontal(p1, p2.first, p2.second) && (checkHorizontal(p1, r, c) || checkHorizontal(p2, r, c));
     }
 
     private boolean checkHorizontal(Pair<Integer, Integer> p, int r, int c){
@@ -163,8 +166,7 @@ public class Model {
     }
 
     private boolean checkVertical(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
-        return ((p1.second == p2.second) && (c == p1.second) && ((r == p1.first +1 ) || (r == p1.first -1 ) || (r == p2.first - 1) ||
-                (r == p2.first +1)));
+        return checkVertical(p1, p2.first, p2.second) && (checkVertical(p1, r, c) || checkVertical(p2, r, c));
     }
 
     private boolean checkVertical(Pair<Integer, Integer> p1, int r, int c){
@@ -172,11 +174,30 @@ public class Model {
     }
 
     private boolean checkDiagonal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
-        return checkDiagonal(p1, r, c) || checkDiagonal(p2, r, c);
+        return (checkDiagonalRightUp(p1, p2.first, p2.second) && (checkDiagonalRightUp(p1, r, c) || checkDiagonalRightUp(p2, r, c)))
+                ||(checkDiagonalLeftUp(p1, p2.first, p2.second) && (checkDiagonalLeftUp(p1, r, c) || checkDiagonalLeftUp(p2, r, c)))
+                || (checkDiagonalLeftDown(p1, p2.first, p2.second) && (checkDiagonalLeftDown(p1, r, c) || checkDiagonalLeftDown(p2, r, c)))
+                || (checkDiagonalRightDown(p1, p2.first, p2.second) && (checkDiagonalRightDown(p1, r, c) || checkDiagonalRightDown(p2, r, c)));
     }
 
     private boolean checkDiagonal(Pair<Integer, Integer> p1, int r, int c){
         return (p1.first == r + 1 || p1.first == r - 1) && (p1.second == c + 1 || p1.second == c -1);
+    }
+
+    private boolean checkDiagonalRightUp(Pair<Integer, Integer> p1, int r, int c){
+        return (p1.first == r + 1) && (p1.second == c + 1);
+    }
+
+    private boolean checkDiagonalRightDown(Pair<Integer, Integer> p1, int r, int c){
+        return (p1.first == r + 1) && (p1.second == c - 1);
+    }
+
+    private boolean checkDiagonalLeftUp(Pair<Integer, Integer> p1, int r, int c){
+        return ( p1.first == r - 1) && (p1.second == c +1);
+    }
+
+    private boolean checkDiagonalLeftDown(Pair<Integer, Integer> p1, int r, int c){
+        return ( p1.first == r - 1) && (p1.second == c -1);
     }
 
     public void checkAnswer(){
@@ -277,23 +298,23 @@ public class Model {
     public void increaseLevel(){
         if(mLevel + 1 <= MAX_LEVEL){
             mLevel++;
-            startlevel(mLevel);
+            mBoard.setLevel(mLevel);
         }
     }
 
     public void decreaseLevel(){
         if(mLevel - 1 >= 1){
             mLevel--;
-            startlevel(mLevel);
+            mBoard.setLevel(mLevel);
         }
     }
 
     public void repeatLevel(){
-        startlevel(mLevel);
+        startlevel(mLevel, mView);
     }
 
     public void startTutorial(){
-        startlevel(0);
+        mBoard.setLevel(0);
         coachMarksSeen = 0;
 
         new TribsTutorial(mContext, this);
@@ -321,12 +342,24 @@ public class Model {
 
     }
 
+    public void quit(){
+        mBoard.onBackPressed();
+    }
+
+    public int getMAX_LEVEL(){
+        return MAX_LEVEL;
+    }
+
     private static int mLevelFiles[]={
             R.raw.tut,
             R.raw.lvl1,
             R.raw.lvl2,
             R.raw.lvl3,
             R.raw.lvl4,
-            R.raw.lvl5
+            R.raw.lvl5,
+            R.raw.lvl6,
+            R.raw.lvl7,
+            R.raw.lvl8,
+            R.raw.lvl9
     };
 }
