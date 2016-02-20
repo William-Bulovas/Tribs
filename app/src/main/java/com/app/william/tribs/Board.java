@@ -1,25 +1,20 @@
 package com.app.william.tribs;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.support.v7.app.ActionBar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.os.Handler;
 
 
-public class Board extends ActionBarActivity implements View.OnClickListener {
+public class Board extends ActionBarActivity implements LevelPickerFragment.StartLevelCallBack{
 
     private static final int[] BOARD_IDS={
             R.id.s1_1,
@@ -104,87 +99,102 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
     };
 
     private Model model;
-    private static Button grid[] = new Button[25];
-    private static Button answers[] = new Button[8];
-    private static View connectors_hor[] = new View[20];
-    private static View connectors_ver[] = new View[20];
     private TextView levelLbl;
     private static String TRIBS_PREFS = "Tribs_Prefs";
+    private LinearLayout picker_menu;
+    private int picker_width;
+    private RelativeLayout picker_action_bar;
+    private ViewPager mViewPager;
+    private BoardPagerAdapter mBoardPagerAdapter;
+    private ViewPager mPickerPager;
+    TribsDragListener mDragListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
-
-        ActionBar actionBar= getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.level_picker, null);
-
-        actionBar.setCustomView(view);
-
-        Button nextLvl = (Button) view.findViewById(R.id.nextLvl);
-        Button preLvl = (Button) view.findViewById(R.id.prevLvl);
-        Button refresh = (Button) view.findViewById(R.id.refresh);
-
-        levelLbl = (TextView) view.findViewById(R.id.lvlTitle);
-
-        nextLvl.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                model.increaseLevel();
-            }
-        });
-
-        preLvl.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                model.decreaseLevel();
-            }
-        });
-
-        refresh.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                model.repeatLevel();
-            }
-        });
-
-        grid = new Button[25];
-        answers = new Button[8];
-
-        for(int i = 0; i < 5; i++){
-            for(int j = 0; j < 5; j++){
-                grid[i+ 5 *j] = (Button) findViewById(BOARD_IDS[i + 5*j]);
-                grid[i + 5 * j].setOnClickListener(this);
-                grid[i+ 5 * j].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_blank_with_downstate));
-            }
-        }
-
-        for(int i =0 ; i < 4; i++){
-            for(int j = 0; j < 2; j++){
-                answers[i+ 4 *j] = (Button) findViewById(ANSWER_IDS[i + 4*j]);
-                answers[i+ 4 * j].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_white));
-            }
-        }
-
-        for(int i=0; i < 20; i++){
-            connectors_hor[i] = findViewById(CONNECTOR_IDS_HORS[i]);
-            connectors_ver[i] = findViewById(CONNECTOR_IDS_VER[i]);
-        }
-
         model = new Model(this, this);
 
+        picker_width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
+
+
+        getSupportActionBar().hide();
+
+        picker_action_bar = (RelativeLayout) findViewById(R.id.actionbar_picker);
+
+        TextView quit = (TextView) findViewById(R.id.quit);
+        Button nextLvl = (Button) findViewById(R.id.nextLvl);
+        Button preLvl = (Button) findViewById(R.id.prevLvl);
+        Button refresh = (Button) findViewById(R.id.refresh);
+
+        levelLbl = (TextView) findViewById(R.id.lvlTitle);
+
+
+        picker_menu = (LinearLayout) findViewById(R.id.level_picker_menu);
+        picker_menu.setY(-picker_width);
+
+        final ViewConfiguration vc = ViewConfiguration.get(this);
+        final int swipeMinDistance = vc.getScaledPagingTouchSlop();
+
+        mDragListener = new TribsDragListener(picker_action_bar, picker_menu, picker_width, swipeMinDistance/2, model);
+
+        levelLbl.setOnTouchListener(mDragListener);
+
+        quit.setOnTouchListener(mDragListener);
+
+        nextLvl.setOnTouchListener(mDragListener);
+
+        preLvl.setOnTouchListener(mDragListener);
+
+        refresh.setOnTouchListener(mDragListener);
+        picker_action_bar.setOnTouchListener(mDragListener);
+        picker_menu.setOnTouchListener(mDragListener);
+
+
+        mViewPager = (ViewPager) findViewById(R.id.board_pager);
+
+        mBoardPagerAdapter = new BoardPagerAdapter(model, getSupportFragmentManager(), model.getMAX_LEVEL());
+
+        mViewPager.setAdapter(mBoardPagerAdapter);
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                BoardFragment frag = mBoardPagerAdapter.getPrimary();
+
+                if (frag != null && positionOffset == 0 && positionOffsetPixels == 0) {
+                    model.startlevel(position, frag);
+                    frag.setmModel(model);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                BoardFragment frag = mBoardPagerAdapter.getPrimary();
+
+                if (frag != null) {
+                    model.startlevel(position, frag);
+                    frag.setmModel(model);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        mPickerPager = (ViewPager) findViewById(R.id.level_picker_pager);
+        LevelPickerPagerAdapter levelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), model.getMAX_LEVEL());
+        mPickerPager.setAdapter(levelPickerPagerAdapter);
 
         SharedPreferences preferences = getSharedPreferences(TRIBS_PREFS, 0);
-        if(preferences.getBoolean("first_time", true) || true) {
+        if(preferences.getBoolean("first_time", true)) {
             preferences.edit().putBoolean("first_time", false).commit();
             model.startTutorial();
         }else {
-            model.startlevel(1);
+            mViewPager.setCurrentItem(1);
+
         }
     }
 
@@ -210,67 +220,6 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v){
-        int id = v.getId();
-
-        for(int i = 0; i < 5; i++){
-            for(int j = 0; j < 5; j++){
-                if(BOARD_IDS[i + j *5] == id) {
-                    model.blockSelected(i, j);
-                    break;
-                }
-            }
-        }
-    }
-
-    public void setGrid(int w, int h, int val){
-        grid[w+ 5 * h].setText(String.valueOf(val));
-        grid[w + 5 * h].setClickable(true);
-        unSetButtonSelected(w, h);
-    }
-
-    public void setAnswer(int i, int val){
-        answers[i].setText(String.valueOf(val));
-        answers[i].setClickable(false);
-        setUnAnswered(i);
-    }
-
-    public void setButtonSelected(int w, int h){
-        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_green));
-    }
-
-    public void unSetButtonSelected(int w, int h){
-        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_blank_with_downstate));
-    }
-
-    public void setButtonAnswered(int w, int h){
-        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_blue));
-        grid[w + 5 * h].setClickable(false);
-    }
-
-    public void setAnswered(int count){
-        answers[count].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_gold));
-    }
-
-    public void setUnAnswered(int count){
-        answers[count].setBackgroundDrawable(getResources().getDrawable(R.drawable.answer_white));
-    }
-
-    public void setAnswerUnVisible(int count){
-        answers[count].setVisibility(View.GONE);
-        if(count > 3){
-            ((LinearLayout)findViewById(R.id.answers_row_two)).invalidate();
-        }
-    }
-
-    public void setAnswerVisible(int count){
-        answers[count].setVisibility(View.VISIBLE);
-        if(count > 3){
-            ((LinearLayout)findViewById(R.id.answers_row_two)).invalidate();
-        }
-    }
-
     public void setTitle(int level){
         if(level ==0) {
             levelLbl.setText("Tutorial");
@@ -279,82 +228,13 @@ public class Board extends ActionBarActivity implements View.OnClickListener {
         }
     }
 
-    public void setWrong(final int w, final int h){
-        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.drawable.tile_red_pressed));
-        Handler handler = new Handler();
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                unSetButtonSelected(w, h);
-            }
-        }, 100);
-
+    public void setLevel(int level){
+        mViewPager.setCurrentItem(level);
     }
 
-    public void setHorsSelected(int h1, int w1, int h2, int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.parseColor("#66CD00"));
-    }
-    public void setHorsUnSelected(int h1, int w1, int h2, int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.TRANSPARENT);
-    }
-    public void setHorsUnSelected(int i){
-        connectors_hor[i].setBackgroundColor(Color.TRANSPARENT);
-    }
-    public void setHorsAnswered(int h1, int w1, int h2, int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.BLUE);
-    }
-
-    public void setHorsWrong(final int h1, final int w1, final int h2, final int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.RED);
-        Handler handler = new Handler();
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setHorsUnSelected(h1, w1, h2, w2);
-            }
-        }, 100);
-    }
-
-    public void setVerSelected(int h1, int w1, int h2, int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.parseColor("#66CD00"));
-    }
-    public void setVerUnSelected(int h1, int w1, int h2, int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.TRANSPARENT);
-    }
-    public void setVerUnSelected(int i){
-        connectors_ver[i].setBackgroundColor(Color.TRANSPARENT);
-    }
-    public void setVerAnswered(int h1, int w1, int h2, int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.BLUE);
-    }
-
-    public void setVerWrong(final int h1, final int w1, final int h2, final int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.RED);
-        Handler handler = new Handler();
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setVerUnSelected(h1, w1, h2, w2);
-            }
-        }, 100);
+    @Override
+    public void startLevel(int i) {
+        mViewPager.setCurrentItem(i);
+        mDragListener.closePicker(20);
     }
 }
