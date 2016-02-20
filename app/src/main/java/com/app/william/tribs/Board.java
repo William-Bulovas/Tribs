@@ -1,32 +1,20 @@
 package com.app.william.tribs;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.DragEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewParent;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.os.Handler;
 
 
-public class Board extends ActionBarActivity {
+public class Board extends ActionBarActivity implements LevelPickerFragment.StartLevelCallBack{
 
     private static final int[] BOARD_IDS={
             R.id.s1_1,
@@ -118,6 +106,8 @@ public class Board extends ActionBarActivity {
     private RelativeLayout picker_action_bar;
     private ViewPager mViewPager;
     private BoardPagerAdapter mBoardPagerAdapter;
+    private ViewPager mPickerPager;
+    TribsDragListener mDragListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,19 +136,19 @@ public class Board extends ActionBarActivity {
         final ViewConfiguration vc = ViewConfiguration.get(this);
         final int swipeMinDistance = vc.getScaledPagingTouchSlop();
 
-        TribsDragListener dragListener = new TribsDragListener(picker_action_bar, picker_menu, picker_width, swipeMinDistance/2, model);
+        mDragListener = new TribsDragListener(picker_action_bar, picker_menu, picker_width, swipeMinDistance/2, model);
 
-        levelLbl.setOnTouchListener(dragListener);
+        levelLbl.setOnTouchListener(mDragListener);
 
-        quit.setOnTouchListener(dragListener);
+        quit.setOnTouchListener(mDragListener);
 
-        nextLvl.setOnTouchListener(dragListener);
+        nextLvl.setOnTouchListener(mDragListener);
 
-        preLvl.setOnTouchListener(dragListener);
+        preLvl.setOnTouchListener(mDragListener);
 
-        refresh.setOnTouchListener(dragListener);
-        picker_action_bar.setOnTouchListener(dragListener);
-        picker_menu.setOnTouchListener(dragListener);
+        refresh.setOnTouchListener(mDragListener);
+        picker_action_bar.setOnTouchListener(mDragListener);
+        picker_menu.setOnTouchListener(mDragListener);
 
 
         mViewPager = (ViewPager) findViewById(R.id.board_pager);
@@ -172,7 +162,7 @@ public class Board extends ActionBarActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 BoardFragment frag = mBoardPagerAdapter.getPrimary();
 
-                if(frag != null && positionOffset == 0 && positionOffsetPixels == 0){
+                if (frag != null && positionOffset == 0 && positionOffsetPixels == 0) {
                     model.startlevel(position, frag);
                     frag.setmModel(model);
                 }
@@ -182,7 +172,7 @@ public class Board extends ActionBarActivity {
             public void onPageSelected(int position) {
                 BoardFragment frag = mBoardPagerAdapter.getPrimary();
 
-                if(frag != null){
+                if (frag != null) {
                     model.startlevel(position, frag);
                     frag.setmModel(model);
                 }
@@ -193,6 +183,10 @@ public class Board extends ActionBarActivity {
 
             }
         });
+
+        mPickerPager = (ViewPager) findViewById(R.id.level_picker_pager);
+        LevelPickerPagerAdapter levelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), model.getMAX_LEVEL());
+        mPickerPager.setAdapter(levelPickerPagerAdapter);
 
         SharedPreferences preferences = getSharedPreferences(TRIBS_PREFS, 0);
         if(preferences.getBoolean("first_time", true)) {
@@ -236,5 +230,11 @@ public class Board extends ActionBarActivity {
 
     public void setLevel(int level){
         mViewPager.setCurrentItem(level);
+    }
+
+    @Override
+    public void startLevel(int i) {
+        mViewPager.setCurrentItem(i);
+        mDragListener.closePicker(20);
     }
 }

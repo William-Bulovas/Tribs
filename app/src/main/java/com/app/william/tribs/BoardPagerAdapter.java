@@ -35,7 +35,7 @@ public class BoardPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mNumLevels;
+        return mNumLevels + 1;
     }
 
     public BoardFragment getPrimary(){

@@ -174,10 +174,10 @@ public class Model implements Serializable{
     }
 
     private boolean checkDiagonal(Pair<Integer, Integer> p1, Pair<Integer, Integer> p2, int r, int c){
-        return (checkDiagonalRightUp(p1, p2.first, p2.second) && (checkDiagonalRightUp(p1, r, c) || checkDiagonalRightUp(p2, r, c)))
-                ||(checkDiagonalLeftUp(p1, p2.first, p2.second) && (checkDiagonalLeftUp(p1, r, c) || checkDiagonalLeftUp(p2, r, c)))
-                || (checkDiagonalLeftDown(p1, p2.first, p2.second) && (checkDiagonalLeftDown(p1, r, c) || checkDiagonalLeftDown(p2, r, c)))
-                || (checkDiagonalRightDown(p1, p2.first, p2.second) && (checkDiagonalRightDown(p1, r, c) || checkDiagonalRightDown(p2, r, c)));
+        return (checkDiagonalRightUp(p1, p2.first, p2.second) && (checkDiagonalLeftDown(p1, r, c) || checkDiagonalRightUp(p2, r, c)))
+                ||(checkDiagonalLeftUp(p1, p2.first, p2.second) && (checkDiagonalRightDown(p1, r, c) || checkDiagonalLeftUp(p2, r, c)))
+                || (checkDiagonalLeftDown(p1, p2.first, p2.second) && (checkDiagonalRightUp(p1, r, c) || checkDiagonalLeftDown(p2, r, c)))
+                || (checkDiagonalRightDown(p1, p2.first, p2.second) && (checkDiagonalLeftUp(p1, r, c) || checkDiagonalRightDown(p2, r, c)));
     }
 
     private boolean checkDiagonal(Pair<Integer, Integer> p1, int r, int c){

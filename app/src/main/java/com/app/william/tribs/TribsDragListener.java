@@ -120,7 +120,7 @@ public class TribsDragListener implements View.OnTouchListener, View.OnClickList
         }
     }
 
-    private void openPicker(float animationTime){
+    public void openPicker(float animationTime){
         mPickerActionBar.animate()
                 .y(mPickerWidth)
                 .setDuration((long) animationTime / 5)
@@ -131,7 +131,7 @@ public class TribsDragListener implements View.OnTouchListener, View.OnClickList
                 .start();
     }
 
-    private void closePicker(float animationTime){
+    public void closePicker(float animationTime){
         mPickerActionBar.animate()
                 .y(0)
                 .setDuration((long) (animationTime) / 5)
