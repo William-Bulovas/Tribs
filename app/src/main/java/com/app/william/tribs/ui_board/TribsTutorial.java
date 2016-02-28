@@ -1,4 +1,4 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextPaint;
 
+import com.app.william.tribs.Model;
+import com.app.william.tribs.R;
 import com.github.amlcurran.showcaseview.MaterialShowcaseDrawer;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseDrawer;

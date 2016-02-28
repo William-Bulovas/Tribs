@@ -1,4 +1,4 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_level_picker;
 
 /**
  * Created by William on 2/10/2016.

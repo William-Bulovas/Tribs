@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Board"
+            android:name=".ui_board.Board"
             android:label="@string/title_activity_board"
             android:parentActivityName=".StartingPage"
             android:configChanges="orientation"

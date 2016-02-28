@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.app.william.tribs.ui_board.Board;
+
 
 public class StartingPage extends ActionBarActivity {
 

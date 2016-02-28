@@ -53,7 +53,7 @@
     </RelativeLayout>
 
 
-    <com.app.william.tribs.NonSwipingViewPager
+    <com.app.william.tribs.ui_board.NonSwipingViewPager
         android:id="@+id/board_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

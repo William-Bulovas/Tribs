@@ -1,4 +1,4 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,8 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.app.william.tribs.ui_level_picker.LevelPickerFragment;
+import com.app.william.tribs.ui_level_picker.LevelPickerPagerAdapter;
+import com.app.william.tribs.Model;
+import com.app.william.tribs.R;
 
-public class Board extends ActionBarActivity implements LevelPickerFragment.StartLevelCallBack{
+
+public class Board extends ActionBarActivity implements LevelPickerFragment.StartLevelCallBack {
 
     private static final int[] BOARD_IDS={
             R.id.s1_1,
@@ -260,11 +265,11 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onPause() {
         SharedPreferences preferences = getSharedPreferences(TRIBS_PREFS, 0);
         preferences.edit().putInt("farthest_level", mFarthestLevel).apply();
 
-        super.onDestroy();
+        super.onPause();
     }
 
     @Override

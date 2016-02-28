@@ -1,4 +1,4 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_level_picker;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

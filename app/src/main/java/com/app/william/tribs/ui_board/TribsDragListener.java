@@ -1,10 +1,13 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import com.app.william.tribs.Model;
+import com.app.william.tribs.R;
 
 /**
  * Created by William on 2/11/2016.

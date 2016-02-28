@@ -1,18 +1,17 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import java.util.zip.Inflater;
+import com.app.william.tribs.Model;
+import com.app.william.tribs.R;
 
 /**
  * Created by William on 2/15/2016.

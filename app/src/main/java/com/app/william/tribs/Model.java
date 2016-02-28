@@ -1,28 +1,16 @@
 package com.app.william.tribs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Pair;
-import android.view.View;
 
-import com.github.amlcurran.showcaseview.MaterialShowcaseDrawer;
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseDrawer;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
+import com.app.william.tribs.ui_board.Board;
+import com.app.william.tribs.ui_board.BoardFragment;
+import com.app.william.tribs.ui_board.TribsTutorial;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -30,7 +18,7 @@ import java.util.Scanner;
 /**
  * Created by Williamv on 1/3/2016.
  */
-public class Model implements Serializable{
+public class Model {
 
     private BoardFragment mView;
     private Board mBoard;
@@ -43,7 +31,7 @@ public class Model implements Serializable{
     private int numAnswered;
     private int mFarthestLevel;
 
-    Model(Board v, Context context){
+    public Model(Board v, Context context){
         mBoard = v;
         mContext = context;
     }

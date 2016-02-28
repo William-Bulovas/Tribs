@@ -1,4 +1,4 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_level_picker;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 
-import java.sql.Statement;
+import com.app.william.tribs.R;
 
 /**
  * Created by William on 2/5/2016.
