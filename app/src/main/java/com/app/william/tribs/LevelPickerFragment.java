@@ -20,15 +20,17 @@ import java.sql.Statement;
 public class LevelPickerFragment extends Fragment {
     private int mFirstLevel;
     private int mLastLevel;
+    private int mFarthest;
     private GridView mGridView;
     private StartLevelCallBack mCallBacks;
 
-    public static LevelPickerFragment newInstance(int levelStart, int levelEnd) {
+    public static LevelPickerFragment newInstance(int levelStart, int levelEnd, int farthest) {
         LevelPickerFragment myFragment = new LevelPickerFragment();
 
         Bundle args = new Bundle();
         args.putInt("levelStart", levelStart);
         args.putInt("levelEnd", levelEnd);
+        args.putInt("farthest", farthest);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -47,6 +49,7 @@ public class LevelPickerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         mFirstLevel = getArguments().getInt("levelStart");
         mLastLevel = getArguments().getInt("levelEnd");
+        mFarthest = getArguments().getInt("farthest");
         super.onCreate(savedInstanceState);
     }
 
@@ -59,6 +62,7 @@ public class LevelPickerFragment extends Fragment {
 
         int width = v.getWidth();
         mGridView.setAdapter(new BaseAdapter() {
+
             @Override
             public int getCount() {
                 return 16;
@@ -76,37 +80,47 @@ public class LevelPickerFragment extends Fragment {
 
             @Override
             public View getView(final int position, View convertView, ViewGroup parent) {
-
-
                 Button btn;
                 if (convertView == null) {
                     // if it's not recycled, initialize some attributes
                     btn = new Button(getActivity());
                     btn.setLayoutParams(new GridView.LayoutParams(250, 250));
                     btn.setPadding(4, 4, 4, 4);
-                    btn.setText(String.valueOf(position + 1));
+                    btn.setText(String.valueOf(position + mFirstLevel));
                 } else {
                     btn = (Button) convertView;
                 }
 
-                if(position + 1 > mLastLevel) {
+                if(position + mFirstLevel > mLastLevel) {
                     btn.setVisibility(View.INVISIBLE);
                 }
                 else {
                     btn.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            mCallBacks.startLevel(position + 1);
+                            if(position + mFirstLevel > mFarthest + 1) return;
+                            mCallBacks.startLevel(position + mFirstLevel);
                         }
                     });
                 }
 
-                btn.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.tile_white));
+                if(position + mFirstLevel > mFarthest + 1){
+                    btn.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.tile_white));
+                } else if(position + mFirstLevel == mFarthest + 1){
+                    btn.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.tile_blue));
+                } else{
+                    btn.setBackgroundDrawable(getActivity().getResources().getDrawable(R.drawable.tile_green));
+                }
                 return btn;
             }
         });
 
         return v;
+    }
+
+    public void setFarthest(int mFarthest) {
+        this.mFarthest = mFarthest;
+        ((BaseAdapter) mGridView.getAdapter()).notifyDataSetChanged();
     }
 
     @Override

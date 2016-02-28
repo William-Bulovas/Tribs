@@ -31,7 +31,7 @@ import java.util.Scanner;
  * Created by Williamv on 1/3/2016.
  */
 public class Model implements Serializable{
-    private int MAX_LEVEL = 9;
+
     private BoardFragment mView;
     private Board mBoard;
     private int mLevel;
@@ -41,15 +41,20 @@ public class Model implements Serializable{
     private List<Integer> grid;
     private Context mContext;
     private int numAnswered;
-    private int coachMarksSeen;
+    private int mFarthestLevel;
 
     Model(Board v, Context context){
         mBoard = v;
         mContext = context;
     }
 
-    public void startlevel(int l, BoardFragment boardFragment){
-        if (l > MAX_LEVEL) return;
+    public void startlevel(int l, BoardFragment bordFragment){
+        startlevel(l, bordFragment, false);
+    }
+
+    public void startlevel(int l, BoardFragment boardFragment, boolean showTut){
+        if (l > MAX_LEVEL || l > mFarthestLevel + 1) return;
+
 
         mView = boardFragment;
         mLevel = l;
@@ -71,7 +76,11 @@ public class Model implements Serializable{
 
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
-                    mView.setGrid(i, j, grid.get(i + 5 * j));
+                    if(grid.get(i + 5 * j) == - 1){
+                        mView.setBlock(i, j, grid.get(i + 5 * j));
+                    } else {
+                        mView.setGrid(i, j, grid.get(i + 5 * j));
+                    }
                 }
             }
 
@@ -103,6 +112,11 @@ public class Model implements Serializable{
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+
+        if(showTut){
+            startTutorial();
         }
     }
 
@@ -285,18 +299,26 @@ public class Model implements Serializable{
                         mView.setAnswered(countSub);
                     }
                 })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        mView.setAnswered(countAdd);
+                    }
+                })
                 .show();
 
     }
 
     private void checkWin(){
         if(numAnswered == answers.size()){
+            mBoard.setFarthest(mLevel);
+            mFarthestLevel = mLevel;
             endLevelDialog(mLevel);
         }
     }
 
     public void increaseLevel(){
-        if(mLevel + 1 <= MAX_LEVEL){
+        if(mLevel + 1 <= MAX_LEVEL && mLevel + 1 <= mFarthestLevel + 1){
             mLevel++;
             mBoard.setLevel(mLevel);
         }
@@ -314,9 +336,6 @@ public class Model implements Serializable{
     }
 
     public void startTutorial(){
-        mBoard.setLevel(0);
-        coachMarksSeen = 0;
-
         new TribsTutorial(mContext, this);
     }
 
@@ -350,6 +369,10 @@ public class Model implements Serializable{
         return MAX_LEVEL;
     }
 
+    public void setFarthest(int farthest){
+        mFarthestLevel = farthest;
+    }
+
     private static int mLevelFiles[]={
             R.raw.tut,
             R.raw.lvl1,
@@ -360,6 +383,16 @@ public class Model implements Serializable{
             R.raw.lvl6,
             R.raw.lvl7,
             R.raw.lvl8,
-            R.raw.lvl9
+            R.raw.lvl9,
+            R.raw.lvl10,
+            R.raw.lvl11,
+            R.raw.lvl12,
+            R.raw.lvl13,
+            R.raw.lvl14,
+            R.raw.lvl15,
+            R.raw.lvl16,
+            R.raw.lvl17
     };
+
+    private static int MAX_LEVEL = 17;
 }

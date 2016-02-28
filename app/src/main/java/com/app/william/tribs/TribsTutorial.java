@@ -10,6 +10,7 @@ import com.github.amlcurran.showcaseview.MaterialShowcaseDrawer;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseDrawer;
 import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
 import com.github.amlcurran.showcaseview.targets.ViewTarget;
 
 /**
@@ -56,9 +57,9 @@ public class TribsTutorial implements OnShowcaseEventListener {
         completeAction(mCoachMarkId);
         ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
                 .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
-                .setShowcaseDrawer(drawer)
-                .setContentText(getTutText(mCoachMarkId))
-                .setShowcaseEventListener(this).build();
+                        .setShowcaseDrawer(drawer)
+                        .setContentText(getTutText(mCoachMarkId))
+                        .setShowcaseEventListener(this).build();
 
         s.setStyle(R.style.CustomShowcaseTheme);
     }
@@ -116,19 +117,19 @@ public class TribsTutorial implements OnShowcaseEventListener {
     public void completeAction(int id){
         switch (id){
             case 1:
-                //if(!mModel.isBlockSelected(0,0)) mModel.blockSelected(0,0);
+                if(!mModel.isBlockSelected(0,0)) mModel.blockSelected(0,0);
                 break;
             case 2:
-                //if(!mModel.isBlockSelected(0,1)) mModel.blockSelected(0,1);
+                if(!mModel.isBlockSelected(0,1)) mModel.blockSelected(0,1);
                 break;
             case 3:
-                //f(!mModel.isBlockSelected(0,2)) mModel.blockSelected(0,2);
+                if(!mModel.isBlockSelected(0,2)) mModel.blockSelected(0,2);
                 break;
             case 4:
                 break;
             case 5:
-                //if(!mModel.isBlockSelected(1,3)) mModel.blockSelected(1,3);
-                //if(!mModel.isBlockSelected(2,2)) mModel.blockSelected(2,2);
+                if(!mModel.isBlockSelected(1,3)) mModel.blockSelected(1,3);
+                if(!mModel.isBlockSelected(2,2)) mModel.blockSelected(2,2);
                 break;
             case 6:
                 break;

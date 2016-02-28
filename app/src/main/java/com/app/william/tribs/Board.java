@@ -1,6 +1,9 @@
 package com.app.william.tribs;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -108,6 +111,9 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
     private BoardPagerAdapter mBoardPagerAdapter;
     private ViewPager mPickerPager;
     TribsDragListener mDragListener;
+    private int mFarthestLevel;
+    private Button mNextLvl;
+    private Button mPrevLvl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,8 +129,8 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
         picker_action_bar = (RelativeLayout) findViewById(R.id.actionbar_picker);
 
         TextView quit = (TextView) findViewById(R.id.quit);
-        Button nextLvl = (Button) findViewById(R.id.nextLvl);
-        Button preLvl = (Button) findViewById(R.id.prevLvl);
+        mNextLvl = (Button) findViewById(R.id.nextLvl);
+        mPrevLvl = (Button) findViewById(R.id.prevLvl);
         Button refresh = (Button) findViewById(R.id.refresh);
 
         levelLbl = (TextView) findViewById(R.id.lvlTitle);
@@ -142,9 +148,9 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
 
         quit.setOnTouchListener(mDragListener);
 
-        nextLvl.setOnTouchListener(mDragListener);
+        mNextLvl.setOnTouchListener(mDragListener);
 
-        preLvl.setOnTouchListener(mDragListener);
+        mPrevLvl.setOnTouchListener(mDragListener);
 
         refresh.setOnTouchListener(mDragListener);
         picker_action_bar.setOnTouchListener(mDragListener);
@@ -163,8 +169,34 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
                 BoardFragment frag = mBoardPagerAdapter.getPrimary();
 
                 if (frag != null && positionOffset == 0 && positionOffsetPixels == 0) {
-                    model.startlevel(position, frag);
                     frag.setmModel(model);
+                    if(position == 0){
+                        model.startlevel(position, frag, true);
+                    } else{
+                        model.startlevel(position, frag);
+                    }
+
+                    if(position == mFarthestLevel + 1){
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_right_white_24dp);
+                        //fadedArrow.setColorFilter(Color.parseColor("#999999"), PorterDuff.Mode.MULTIPLY);
+                        mNextLvl.setBackgroundDrawable(fadedArrow);
+                        mNextLvl.setActivated(false);
+                    } else {
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_right_white_24dp);
+                        mNextLvl.setBackgroundDrawable(fadedArrow);
+                        mNextLvl.setClickable(true);
+                    }
+
+                    if( position ==  0 || position == 1){
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp);
+                        //fadedArrow.setColorFilter(Color.parseColor("#999999"), PorterDuff.Mode.MULTIPLY);
+                        mPrevLvl.setBackgroundDrawable(fadedArrow);
+                        mPrevLvl.setClickable(false);
+                    } else{
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp);
+                        mPrevLvl.setBackgroundDrawable(fadedArrow);
+                        mPrevLvl.setClickable(true);
+                    }
                 }
             }
 
@@ -173,8 +205,33 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
                 BoardFragment frag = mBoardPagerAdapter.getPrimary();
 
                 if (frag != null) {
-                    model.startlevel(position, frag);
+                    if(position == 0){
+                        model.startlevel(position, frag, true);
+                    } else{
+                        model.startlevel(position, frag);
+                    }
+
                     frag.setmModel(model);
+                    if(position == mFarthestLevel + 1){
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_right_white_24dp);
+                        fadedArrow.setColorFilter(Color.parseColor("#999999"), PorterDuff.Mode.MULTIPLY);
+                        mNextLvl.setBackgroundDrawable(fadedArrow);
+                    } else {
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_right_white_24dp);
+                        fadedArrow.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.MULTIPLY);
+                        mNextLvl.setBackgroundDrawable(fadedArrow);
+                    }
+
+                    if( position ==  0 || position == 1){
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp);
+                        fadedArrow.setColorFilter(Color.parseColor("#999999"), PorterDuff.Mode.MULTIPLY);
+                        mPrevLvl.setBackgroundDrawable(fadedArrow);
+                    } else{
+                        Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp);
+                        fadedArrow.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.MULTIPLY);
+                        mPrevLvl.setBackgroundDrawable(fadedArrow);
+                    }
+
                 }
             }
 
@@ -184,18 +241,29 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
             }
         });
 
-        mPickerPager = (ViewPager) findViewById(R.id.level_picker_pager);
-        LevelPickerPagerAdapter levelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), model.getMAX_LEVEL());
-        mPickerPager.setAdapter(levelPickerPagerAdapter);
-
         SharedPreferences preferences = getSharedPreferences(TRIBS_PREFS, 0);
         if(preferences.getBoolean("first_time", true)) {
-            preferences.edit().putBoolean("first_time", false).commit();
-            model.startTutorial();
+            preferences.edit().putBoolean("first_time", false).apply();
+            mFarthestLevel = -1;
         }else {
-            mViewPager.setCurrentItem(1);
-
+            mFarthestLevel = preferences.getInt("farthest_level", 0);
         }
+
+        mPickerPager = (ViewPager) findViewById(R.id.level_picker_pager);
+        LevelPickerPagerAdapter levelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), model.getMAX_LEVEL(), mFarthestLevel);
+        mPickerPager.setAdapter(levelPickerPagerAdapter);
+
+
+        model.setFarthest(mFarthestLevel);
+        mViewPager.setCurrentItem(mFarthestLevel + 1);
+    }
+
+    @Override
+    protected void onDestroy() {
+        SharedPreferences preferences = getSharedPreferences(TRIBS_PREFS, 0);
+        preferences.edit().putInt("farthest_level", mFarthestLevel).apply();
+
+        super.onDestroy();
     }
 
     @Override
@@ -236,5 +304,11 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
     public void startLevel(int i) {
         mViewPager.setCurrentItem(i);
         mDragListener.closePicker(20);
+    }
+
+    public void setFarthest(int i) {
+        if (mFarthestLevel < i) {
+            mFarthestLevel = i;
+        }
     }
 }

@@ -158,6 +158,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
         return view;
     }
 
+
     public void startLevel(){
         mModel.startlevel(mLevel, this);
     }
@@ -308,5 +309,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
 
     public void setmModel(Model mModel) {
         this.mModel = mModel;
+    }
+
+    public void setBlock(int w, int h, int val){
+        grid[w + 5 * h].setClickable(false);
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.mipmap.tile_block));
     }
 }
