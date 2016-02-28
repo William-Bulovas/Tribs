@@ -23,6 +23,7 @@ public class LevelPickerFragment extends Fragment {
     private int mFarthest;
     private GridView mGridView;
     private StartLevelCallBack mCallBacks;
+    private BaseAdapter mAdapter;
 
     public static LevelPickerFragment newInstance(int levelStart, int levelEnd, int farthest) {
         LevelPickerFragment myFragment = new LevelPickerFragment();
@@ -61,7 +62,8 @@ public class LevelPickerFragment extends Fragment {
         mGridView = (GridView) v.findViewById(R.id.gridview_level_picker);
 
         int width = v.getWidth();
-        mGridView.setAdapter(new BaseAdapter() {
+
+        mAdapter = new BaseAdapter() {
 
             @Override
             public int getCount() {
@@ -113,14 +115,15 @@ public class LevelPickerFragment extends Fragment {
                 }
                 return btn;
             }
-        });
+        };
+        mGridView.setAdapter(mAdapter);
 
         return v;
     }
 
     public void setFarthest(int mFarthest) {
         this.mFarthest = mFarthest;
-        ((BaseAdapter) mGridView.getAdapter()).notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

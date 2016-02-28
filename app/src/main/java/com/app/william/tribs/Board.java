@@ -114,6 +114,7 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
     private int mFarthestLevel;
     private Button mNextLvl;
     private Button mPrevLvl;
+    private LevelPickerPagerAdapter mLevelPickerPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,8 +251,8 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
         }
 
         mPickerPager = (ViewPager) findViewById(R.id.level_picker_pager);
-        LevelPickerPagerAdapter levelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), model.getMAX_LEVEL(), mFarthestLevel);
-        mPickerPager.setAdapter(levelPickerPagerAdapter);
+        mLevelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), model.getMAX_LEVEL(), mFarthestLevel);
+        mPickerPager.setAdapter(mLevelPickerPagerAdapter);
 
 
         model.setFarthest(mFarthestLevel);
@@ -309,6 +310,7 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
     public void setFarthest(int i) {
         if (mFarthestLevel < i) {
             mFarthestLevel = i;
+            mLevelPickerPagerAdapter.setFarthest(i);
         }
     }
 }
