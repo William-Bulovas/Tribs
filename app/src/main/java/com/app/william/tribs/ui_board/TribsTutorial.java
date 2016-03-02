@@ -49,10 +49,36 @@ public class TribsTutorial implements OnShowcaseEventListener {
         s.setStyle(R.style.CustomShowcaseTheme);
     }
 
+    public TribsTutorial(Context context, Model model, int level){
+        super();
+
+        mContext = context;
+        if(level == 10) {
+            mCoachMarkId = 7;
+            mModel = model;
+
+            mPaint = new TextPaint();
+            Paint temp = new Paint();
+            temp.setColor(Color.BLACK);
+            mPaint.set(temp);
+
+            drawer = new MaterialShowcaseDrawer(mContext.getResources());
+            drawer.setBackgroundColour(Color.BLACK);
+
+            ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
+                    .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
+                    .setContentText(getTutText(mCoachMarkId))
+                    .setShowcaseDrawer(drawer)
+                    .setShowcaseEventListener(this).build();
+
+            s.setStyle(R.style.CustomShowcaseTheme);
+        }
+    }
+
     @Override
     public void onShowcaseViewHide(ShowcaseView showcaseView) {
         mCoachMarkId++;
-        if(mCoachMarkId == 7){
+        if(mCoachMarkId >= 7){
             return;
         }
 
@@ -92,6 +118,8 @@ public class TribsTutorial implements OnShowcaseEventListener {
                 return "You can link any three tiles that are horizontal, vertical, or diagonal!";
             case 6:
                 return "Now complete the level!";
+            case 7:
+                return "These blocks you cannot tap!";
         }
         return "error";
     }
@@ -112,6 +140,8 @@ public class TribsTutorial implements OnShowcaseEventListener {
                 return R.id.s2_4;
             case 6:
                 return R.id.s2_4;
+            case 7:
+                return R.id.s1_1;
         }
         return 0;
     }

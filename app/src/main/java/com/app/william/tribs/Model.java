@@ -105,6 +105,8 @@ public class Model {
 
         if(showTut){
             startTutorial();
+        } else if(mLevel == 10 && mFarthestLevel < 10){
+            new TribsTutorial(mContext, this, 10);
         }
     }
 
