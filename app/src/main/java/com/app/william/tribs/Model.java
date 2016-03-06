@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Pair;
+import android.widget.RelativeLayout;
 
 import com.app.william.tribs.ui_board.Board;
 import com.app.william.tribs.ui_board.BoardFragment;
@@ -92,16 +93,10 @@ public class Model {
                 }
             }
 
-
-
-            for(int i = 0; i < 20; i++){
-                mView.setHorsUnSelected(i);
-                mView.setVerUnSelected(i);
-            }
+            mView.clearLines();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         if(showTut){
             startTutorial();
@@ -124,8 +119,7 @@ public class Model {
                 } else if ((p.first == r + 1 || p.first == r - 1 || p.first == r) && (p.second == c+ 1
                     || p.second == c-1 || p.second == c) ){
                     numSelected++;
-                    if(checkHorizontal(p, r, c)) mView.setHorsSelected(p.first, p.second, r, c);
-                    if(checkVertical(p, r, c)) mView.setVerSelected(p.first, p.second, r, c);
+                    mView.setVerSelected(p.first, p.second, r, c);
                 } else {
                     numSelected = 1;
                     mView.setWrong(p.first, p.second);
@@ -149,8 +143,7 @@ public class Model {
                     numSelected = 1;
                     mView.setWrong(p1.first, p1.second);
                     mView.setWrong(p2.first, p2.second);
-                    if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
-                    if(checkVertical(p1, p2.first, p2.second)) mView.setVerWrong(p1.first, p1.second, p2.first, p2.second);
+                    mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
                     mView.setButtonSelected(r,c);
                     prevSelected.clear();
                 }
@@ -252,24 +245,18 @@ public class Model {
             mView.setButtonAnswered(p1.first, p1.second);
             mView.setButtonAnswered(p2.first, p2.second);
             mView.setButtonAnswered(p3.first, p3.second);
-            if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsAnswered(p1.first, p1.second, p2.first, p2.second);
-            if(checkHorizontal(p1, p3.first, p3.second)) mView.setHorsAnswered(p1.first, p1.second, p3.first, p3.second);
-            if(checkHorizontal(p2, p3.first, p3.second)) mView.setHorsAnswered(p2.first, p2.second, p3.first, p3.second);
-            if(checkVertical(p1, p2.first, p2.second)) mView.setVerAnswered(p1.first, p1.second, p2.first, p2.second);
-            if(checkVertical(p1, p3.first, p3.second)) mView.setVerAnswered(p1.first, p1.second, p3.first, p3.second);
-            if(checkVertical(p2, p3.first, p3.second)) mView.setVerAnswered(p2.first, p2.second, p3.first, p3.second);
+            mView.setHorsAnswered(p1.first, p1.second, p2.first, p2.second);
+            mView.setHorsAnswered(p1.first, p1.second, p3.first, p3.second);
+            mView.setHorsAnswered(p2.first, p2.second, p3.first, p3.second);
             numAnswered++;
             checkWin();
         }else{
             mView.setWrong(p1.first, p1.second);
             mView.setWrong(p2.first, p2.second);
             mView.setWrong(p3.first, p3.second);
-            if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
-            if(checkHorizontal(p1, p3.first, p3.second)) mView.setHorsWrong(p1.first, p1.second, p3.first, p3.second);
-            if(checkHorizontal(p2, p3.first, p3.second)) mView.setHorsWrong(p2.first, p2.second, p3.first, p3.second);
-            if(checkVertical(p1, p2.first, p2.second)) mView.setVerWrong(p1.first, p1.second, p2.first, p2.second);
-            if(checkVertical(p1, p3.first, p3.second)) mView.setVerWrong(p1.first, p1.second, p3.first, p3.second);
-            if(checkVertical(p2, p3.first, p3.second)) mView.setVerWrong(p2.first, p2.second, p3.first, p3.second);
+            mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
+            mView.setHorsWrong(p1.first, p1.second, p3.first, p3.second);
+            mView.setHorsWrong(p2.first, p2.second, p3.first, p3.second);
         }
     }
 
