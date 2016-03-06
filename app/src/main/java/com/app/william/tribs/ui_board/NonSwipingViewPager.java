@@ -1,4 +1,4 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;

@@ -1,18 +1,18 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import java.util.zip.Inflater;
+import com.app.william.tribs.Model;
+import com.app.william.tribs.R;
 
 /**
  * Created by William on 2/15/2016.
@@ -55,56 +55,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             R.id.a2_3,
             R.id.a2_4
     };
-    private static final int[] CONNECTOR_IDS_HORS={
-            R.id.c11_12,
-            R.id.c12_13,
-            R.id.c13_14,
-            R.id.c14_15,
-            R.id.c21_22,
-            R.id.c22_23,
-            R.id.c23_24,
-            R.id.c24_25,
-            R.id.c31_32,
-            R.id.c32_33,
-            R.id.c33_34,
-            R.id.c34_35,
-            R.id.c41_42,
-            R.id.c42_43,
-            R.id.c43_44,
-            R.id.c44_45,
-            R.id.c51_52,
-            R.id.c52_53,
-            R.id.c53_54,
-            R.id.c54_55
-    };
-    private static final int[] CONNECTOR_IDS_VER={
-            R.id.c11_21,
-            R.id.c12_22,
-            R.id.c13_23,
-            R.id.c14_24,
-            R.id.c15_25,
-            R.id.c21_31,
-            R.id.c22_32,
-            R.id.c23_33,
-            R.id.c24_34,
-            R.id.c25_35,
-            R.id.c31_41,
-            R.id.c32_42,
-            R.id.c33_43,
-            R.id.c34_44,
-            R.id.c35_45,
-            R.id.c41_51,
-            R.id.c42_52,
-            R.id.c43_53,
-            R.id.c44_54,
-            R.id.c45_55,
-    };
 
     private Button grid[] = new Button[25];
     private Button answers[] = new Button[8];
-    private View connectors_hor[] = new View[20];
-    private View connectors_ver[] = new View[20];
     private LinearLayout answersRowTwo;
+    private BoardLayout mBoardLayout;
     private Model mModel;
     private int mLevel;
     private boolean levelStarted = false;
@@ -147,16 +102,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             }
         }
 
-        for(int i=0; i < 20; i++){
-            connectors_hor[i] = view.findViewById(CONNECTOR_IDS_HORS[i]);
-            connectors_ver[i] = view.findViewById(CONNECTOR_IDS_VER[i]);
-        }
+        mBoardLayout = (BoardLayout) view.findViewById(R.id.board);
 
         answersRowTwo = (LinearLayout) view.findViewById(R.id.answers_row_two);
 
-
         return view;
     }
+
 
     public void startLevel(){
         mModel.startlevel(mLevel, this);
@@ -236,33 +188,39 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 unSetButtonSelected(w, h);
             }
-        }, 100);
+        }, 200);
 
     }
 
     public void setHorsSelected(int h1, int w1, int h2, int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.parseColor("#66CD00"));
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.parseColor("#66CD00"));
     }
     public void setHorsUnSelected(int h1, int w1, int h2, int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.TRANSPARENT);
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.parseColor("#EEEEEE"));
     }
-    public void setHorsUnSelected(int i){
-        connectors_hor[i].setBackgroundColor(Color.TRANSPARENT);
-    }
+
     public void setHorsAnswered(int h1, int w1, int h2, int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.BLUE);
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.BLUE);
     }
 
     public void setHorsWrong(final int h1, final int w1, final int h2, final int w2){
-        int h = h1;
-        if(h2 < h1) h = h2;
-        connectors_hor[w1 * 4 + h].setBackgroundColor(Color.RED);
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.RED);
         Handler handler = new Handler();
 
         handler.postDelayed(new Runnable() {
@@ -270,32 +228,38 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 setHorsUnSelected(h1, w1, h2, w2);
             }
-        }, 100);
+        }, 200);
     }
 
     public void setVerSelected(int h1, int w1, int h2, int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.parseColor("#66CD00"));
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.parseColor("#66CD00"));
     }
     public void setVerUnSelected(int h1, int w1, int h2, int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.TRANSPARENT);
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.parseColor("#EEEEEE"));
     }
-    public void setVerUnSelected(int i){
-        connectors_ver[i].setBackgroundColor(Color.TRANSPARENT);
-    }
+
     public void setVerAnswered(int h1, int w1, int h2, int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.BLUE);
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.BLUE);
     }
 
     public void setVerWrong(final int h1, final int w1, final int h2, final int w2){
-        int w = w1;
-        if(w2 < w1) w = w2;
-        connectors_ver[w * 5 + h1].setBackgroundColor(Color.RED);
+        Pair<Integer, Integer> pair1 = new Pair<>(h1, w1);
+        Pair<Integer, Integer> pair2 = new Pair<>(h2, w2);
+        Pair<Pair<Integer, Integer>, Pair<Integer,Integer>> pair = new Pair<>(pair1, pair2);
+
+        mBoardLayout.addNewConnection(pair, Color.RED);
         Handler handler = new Handler();
 
         handler.postDelayed(new Runnable() {
@@ -303,10 +267,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 setVerUnSelected(h1, w1, h2, w2);
             }
-        }, 100);
+        }, 200);
     }
 
     public void setmModel(Model mModel) {
         this.mModel = mModel;
+    }
+
+    public void setBlock(int w, int h, int val){
+        grid[w + 5 * h].setClickable(false);
+        grid[w + 5 * h].setBackgroundDrawable(getResources().getDrawable(R.mipmap.tile_block));
+    }
+
+    public void clearLines(){
+        mBoardLayout.clear();
     }
 }

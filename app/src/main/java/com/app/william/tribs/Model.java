@@ -1,28 +1,17 @@
 package com.app.william.tribs;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Pair;
-import android.view.View;
+import android.widget.RelativeLayout;
 
-import com.github.amlcurran.showcaseview.MaterialShowcaseDrawer;
-import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
-import com.github.amlcurran.showcaseview.ShowcaseDrawer;
-import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ActionViewTarget;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
+import com.app.william.tribs.ui_board.Board;
+import com.app.william.tribs.ui_board.BoardFragment;
+import com.app.william.tribs.ui_board.TribsTutorial;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -30,8 +19,8 @@ import java.util.Scanner;
 /**
  * Created by Williamv on 1/3/2016.
  */
-public class Model implements Serializable{
-    private int MAX_LEVEL = 9;
+public class Model {
+
     private BoardFragment mView;
     private Board mBoard;
     private int mLevel;
@@ -41,15 +30,20 @@ public class Model implements Serializable{
     private List<Integer> grid;
     private Context mContext;
     private int numAnswered;
-    private int coachMarksSeen;
+    private int mFarthestLevel;
 
-    Model(Board v, Context context){
+    public Model(Board v, Context context){
         mBoard = v;
         mContext = context;
     }
 
-    public void startlevel(int l, BoardFragment boardFragment){
-        if (l > MAX_LEVEL) return;
+    public void startlevel(int l, BoardFragment bordFragment){
+        startlevel(l, bordFragment, false);
+    }
+
+    public void startlevel(int l, BoardFragment boardFragment, boolean showTut){
+        if (l > MAX_LEVEL || l > mFarthestLevel + 1) return;
+
 
         mView = boardFragment;
         mLevel = l;
@@ -71,7 +65,11 @@ public class Model implements Serializable{
 
             for(int i = 0; i < 5; i++){
                 for(int j = 0; j < 5; j++){
-                    mView.setGrid(i, j, grid.get(i + 5 * j));
+                    if(grid.get(i + 5 * j) == - 1){
+                        mView.setBlock(i, j, grid.get(i + 5 * j));
+                    } else {
+                        mView.setGrid(i, j, grid.get(i + 5 * j));
+                    }
                 }
             }
 
@@ -95,14 +93,15 @@ public class Model implements Serializable{
                 }
             }
 
-
-
-            for(int i = 0; i < 20; i++){
-                mView.setHorsUnSelected(i);
-                mView.setVerUnSelected(i);
-            }
+            mView.clearLines();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        if(showTut){
+            startTutorial();
+        } else if(mLevel == 10 && mFarthestLevel < 10){
+            new TribsTutorial(mContext, this, 10);
         }
     }
 
@@ -120,8 +119,7 @@ public class Model implements Serializable{
                 } else if ((p.first == r + 1 || p.first == r - 1 || p.first == r) && (p.second == c+ 1
                     || p.second == c-1 || p.second == c) ){
                     numSelected++;
-                    if(checkHorizontal(p, r, c)) mView.setHorsSelected(p.first, p.second, r, c);
-                    if(checkVertical(p, r, c)) mView.setVerSelected(p.first, p.second, r, c);
+                    mView.setVerSelected(p.first, p.second, r, c);
                 } else {
                     numSelected = 1;
                     mView.setWrong(p.first, p.second);
@@ -145,8 +143,7 @@ public class Model implements Serializable{
                     numSelected = 1;
                     mView.setWrong(p1.first, p1.second);
                     mView.setWrong(p2.first, p2.second);
-                    if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
-                    if(checkVertical(p1, p2.first, p2.second)) mView.setVerWrong(p1.first, p1.second, p2.first, p2.second);
+                    mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
                     mView.setButtonSelected(r,c);
                     prevSelected.clear();
                 }
@@ -248,24 +245,18 @@ public class Model implements Serializable{
             mView.setButtonAnswered(p1.first, p1.second);
             mView.setButtonAnswered(p2.first, p2.second);
             mView.setButtonAnswered(p3.first, p3.second);
-            if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsAnswered(p1.first, p1.second, p2.first, p2.second);
-            if(checkHorizontal(p1, p3.first, p3.second)) mView.setHorsAnswered(p1.first, p1.second, p3.first, p3.second);
-            if(checkHorizontal(p2, p3.first, p3.second)) mView.setHorsAnswered(p2.first, p2.second, p3.first, p3.second);
-            if(checkVertical(p1, p2.first, p2.second)) mView.setVerAnswered(p1.first, p1.second, p2.first, p2.second);
-            if(checkVertical(p1, p3.first, p3.second)) mView.setVerAnswered(p1.first, p1.second, p3.first, p3.second);
-            if(checkVertical(p2, p3.first, p3.second)) mView.setVerAnswered(p2.first, p2.second, p3.first, p3.second);
+            mView.setHorsAnswered(p1.first, p1.second, p2.first, p2.second);
+            mView.setHorsAnswered(p1.first, p1.second, p3.first, p3.second);
+            mView.setHorsAnswered(p2.first, p2.second, p3.first, p3.second);
             numAnswered++;
             checkWin();
         }else{
             mView.setWrong(p1.first, p1.second);
             mView.setWrong(p2.first, p2.second);
             mView.setWrong(p3.first, p3.second);
-            if(checkHorizontal(p1, p2.first, p2.second)) mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
-            if(checkHorizontal(p1, p3.first, p3.second)) mView.setHorsWrong(p1.first, p1.second, p3.first, p3.second);
-            if(checkHorizontal(p2, p3.first, p3.second)) mView.setHorsWrong(p2.first, p2.second, p3.first, p3.second);
-            if(checkVertical(p1, p2.first, p2.second)) mView.setVerWrong(p1.first, p1.second, p2.first, p2.second);
-            if(checkVertical(p1, p3.first, p3.second)) mView.setVerWrong(p1.first, p1.second, p3.first, p3.second);
-            if(checkVertical(p2, p3.first, p3.second)) mView.setVerWrong(p2.first, p2.second, p3.first, p3.second);
+            mView.setHorsWrong(p1.first, p1.second, p2.first, p2.second);
+            mView.setHorsWrong(p1.first, p1.second, p3.first, p3.second);
+            mView.setHorsWrong(p2.first, p2.second, p3.first, p3.second);
         }
     }
 
@@ -285,18 +276,26 @@ public class Model implements Serializable{
                         mView.setAnswered(countSub);
                     }
                 })
+                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        mView.setAnswered(countAdd);
+                    }
+                })
                 .show();
 
     }
 
     private void checkWin(){
         if(numAnswered == answers.size()){
+            mBoard.setFarthest(mLevel);
+            mFarthestLevel = mLevel;
             endLevelDialog(mLevel);
         }
     }
 
     public void increaseLevel(){
-        if(mLevel + 1 <= MAX_LEVEL){
+        if(mLevel + 1 <= MAX_LEVEL && mLevel + 1 <= mFarthestLevel + 1){
             mLevel++;
             mBoard.setLevel(mLevel);
         }
@@ -314,9 +313,6 @@ public class Model implements Serializable{
     }
 
     public void startTutorial(){
-        mBoard.setLevel(0);
-        coachMarksSeen = 0;
-
         new TribsTutorial(mContext, this);
     }
 
@@ -350,6 +346,10 @@ public class Model implements Serializable{
         return MAX_LEVEL;
     }
 
+    public void setFarthest(int farthest){
+        mFarthestLevel = farthest;
+    }
+
     private static int mLevelFiles[]={
             R.raw.tut,
             R.raw.lvl1,
@@ -360,6 +360,16 @@ public class Model implements Serializable{
             R.raw.lvl6,
             R.raw.lvl7,
             R.raw.lvl8,
-            R.raw.lvl9
+            R.raw.lvl9,
+            R.raw.lvl10,
+            R.raw.lvl11,
+            R.raw.lvl12,
+            R.raw.lvl13,
+            R.raw.lvl14,
+            R.raw.lvl15,
+            R.raw.lvl16,
+            R.raw.lvl17
     };
+
+    private static int MAX_LEVEL = 17;
 }

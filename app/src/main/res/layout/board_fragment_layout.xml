@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.app.william.tribs.Board"
+    tools:context="com.app.william.tribs.ui_board.Board"
     android:orientation="vertical"
     android:weightSum="3">
 
@@ -12,7 +12,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="2">
-        <LinearLayout
+        <com.app.william.tribs.ui_board.BoardLayout
             android:layout_width="320dp"
             android:layout_height="320dp"
             android:orientation="vertical"
@@ -414,7 +414,7 @@
                     android:layout_height="56dp"
                     android:id="@+id/s5_5"/>
             </LinearLayout>
-        </LinearLayout>
+        </com.app.william.tribs.ui_board.BoardLayout>
     </RelativeLayout>
 
     <RelativeLayout

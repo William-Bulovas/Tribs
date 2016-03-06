@@ -1,11 +1,11 @@
-package com.app.william.tribs;
+package com.app.william.tribs.ui_board;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.view.View;
 import android.view.ViewGroup;
+
+import com.app.william.tribs.Model;
 
 /**
  * Created by William on 2/15/2016.
