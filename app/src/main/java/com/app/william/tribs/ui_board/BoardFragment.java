@@ -188,7 +188,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 unSetButtonSelected(w, h);
             }
-        }, 100);
+        }, 200);
 
     }
 
@@ -228,7 +228,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 setHorsUnSelected(h1, w1, h2, w2);
             }
-        }, 100);
+        }, 200);
     }
 
     public void setVerSelected(int h1, int w1, int h2, int w2){
@@ -267,7 +267,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener{
             public void run() {
                 setVerUnSelected(h1, w1, h2, w2);
             }
-        }, 100);
+        }, 200);
     }
 
     public void setmModel(Model mModel) {

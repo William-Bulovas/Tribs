@@ -81,8 +81,8 @@ public class BoardLayout extends LinearLayout {
 
         for(Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> xySet : mConnectors){
             mPaint.setColor(mColours.get(i));
-            canvas.drawLine(xySet.first.first * widthInterval * 2 + widthInterval + 15, xySet.first.second * lengthInterval * 2 + lengthInterval + 15,
-                    xySet.second.first * widthInterval * 2 + widthInterval + 15, xySet.second.second * lengthInterval * 2 + lengthInterval + 15, mPaint);
+            canvas.drawLine(xySet.first.first * widthInterval * 2 + widthInterval + getPaddingRight(), xySet.first.second * lengthInterval * 2 + lengthInterval + getPaddingTop(),
+                    xySet.second.first * widthInterval * 2 + widthInterval + getPaddingRight(), xySet.second.second * lengthInterval * 2 + lengthInterval + getPaddingTop(), mPaint);
 
             i++;
         }
@@ -94,8 +94,8 @@ public class BoardLayout extends LinearLayout {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        mWidth = w;
-        mLength = h;
+        mWidth = w - getPaddingLeft() - getPaddingRight();
+        mLength = h - getPaddingBottom() - getPaddingTop();
     }
 
     public void clear(){
