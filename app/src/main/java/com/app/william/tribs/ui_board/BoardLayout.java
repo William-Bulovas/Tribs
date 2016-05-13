@@ -56,6 +56,8 @@ public class BoardLayout extends LinearLayout {
         mPaint = new Paint();
 
         mPaint.setStrokeWidth(40);
+
+
     }
 
     public void addNewConnection(Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> newConnection, int colour){
@@ -96,6 +98,25 @@ public class BoardLayout extends LinearLayout {
 
         mWidth = w - getPaddingLeft() - getPaddingRight();
         mLength = h - getPaddingBottom() - getPaddingTop();
+
+
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+
+        mWidth = (r-l) - getPaddingLeft() - getPaddingRight();
+        mLength = (b-t) - getPaddingBottom() - getPaddingTop();
+
+        if(mWidth != mLength) {
+            if (mWidth < mLength) {
+                setLayoutParams(new RelativeLayout.LayoutParams(mWidth, mWidth));
+            } else {
+                setLayoutParams(new RelativeLayout.LayoutParams(mLength, mLength));
+            }
+            requestLayout();
+        }
     }
 
     public void clear(){

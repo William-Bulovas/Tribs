@@ -11,17 +11,15 @@ import com.app.william.tribs.Model;
  * Created by William on 2/15/2016.
  */
 public class BoardPagerAdapter extends FragmentPagerAdapter {
-    private Model mModel;
     private FragmentManager mFm;
     int mNumLevels;
     private BoardFragment mPrimaryFrag;
 
 
 
-    public BoardPagerAdapter(Model model, FragmentManager fm, int numLevels){
+    public BoardPagerAdapter(FragmentManager fm, int numLevels){
         super(fm);
 
-        mModel = model;
         mFm = fm;
         mNumLevels = numLevels;
     }

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextPaint;
+import android.view.View;
+import android.widget.Button;
 
 import com.app.william.tribs.Model;
 import com.app.william.tribs.R;
@@ -24,8 +26,10 @@ public class TribsTutorial implements OnShowcaseEventListener {
     private TextPaint mPaint;
     private Model mModel;
     private ShowcaseDrawer drawer;
+    private BoardGridAdapter mAdapter;
+    private BoardGridAdapter mAnswerAdapter;
 
-    public TribsTutorial(Context context, Model model){
+    public TribsTutorial(Context context, Model model, BoardGridAdapter adapter, BoardGridAdapter answerAdapter){
         super();
 
         mContext = context;
@@ -36,12 +40,14 @@ public class TribsTutorial implements OnShowcaseEventListener {
         Paint temp = new Paint();
         temp.setColor(Color.BLACK);
         mPaint.set(temp);
+        mAdapter = adapter;
+        mAnswerAdapter = answerAdapter;
 
         drawer = new MaterialShowcaseDrawer(mContext.getResources());
         drawer.setBackgroundColour(Color.BLACK);
 
         ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
-                .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
+                .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId)))
                 .setContentText(getTutText(mCoachMarkId))
                 .setShowcaseDrawer(drawer)
                 .setShowcaseEventListener(this).build();
@@ -66,7 +72,7 @@ public class TribsTutorial implements OnShowcaseEventListener {
             drawer.setBackgroundColour(Color.BLACK);
 
             ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
-                    .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
+                    .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId)))
                     .setContentText(getTutText(mCoachMarkId))
                     .setShowcaseDrawer(drawer)
                     .setShowcaseEventListener(this).build();
@@ -84,7 +90,7 @@ public class TribsTutorial implements OnShowcaseEventListener {
 
         completeAction(mCoachMarkId);
         ShowcaseView s = new ShowcaseView.Builder((Activity) mContext)
-                .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId), (Activity) mContext))
+                .setTarget(new ViewTarget(getTutHighlight(mCoachMarkId)))
                         .setShowcaseDrawer(drawer)
                         .setContentText(getTutText(mCoachMarkId))
                         .setShowcaseEventListener(this).build();
@@ -124,26 +130,26 @@ public class TribsTutorial implements OnShowcaseEventListener {
         return "error";
     }
 
-    private int getTutHighlight(int id){
+    private View getTutHighlight(int id){
         switch (id){
             case 0:
-                return R.id.s1_1;
+                return ((Button) mAdapter.getItem(0));
             case 1:
-                return R.id.s2_1;
+                return ((Button) mAdapter.getItem(5));
             case 2:
-                return R.id.s3_1;
+                return ((Button) mAdapter.getItem(10));
             case 3:
-                return R.id.a1_2;
+                return ((Button) mAnswerAdapter.getItem(1));
             case 4:
-                return R.id.a1_2;
+                return ((Button) mAnswerAdapter.getItem(1));
             case 5:
-                return R.id.s2_4;
+                return ((Button) mAdapter.getItem(8));
             case 6:
-                return R.id.s2_4;
+                return ((Button) mAdapter.getItem(8));
             case 7:
-                return R.id.s1_1;
+                return ((Button) mAdapter.getItem(0));
         }
-        return 0;
+        return null;
     }
 
     public void completeAction(int id){
