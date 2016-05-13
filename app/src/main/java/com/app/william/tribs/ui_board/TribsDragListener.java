@@ -19,15 +19,15 @@ public class TribsDragListener implements View.OnTouchListener, View.OnClickList
     private boolean picker_action_mode;
     private int mPickerWidth;
     private int mThreshold;
-    private Model mModel;
     private boolean pastThreshold = false;
+    private ChangeLevelCallBacks mCallBacks;
 
-    public TribsDragListener(RelativeLayout picker_action_bar, LinearLayout picker_menu, int picker_width, int threshold, Model model){
+    public TribsDragListener(RelativeLayout picker_action_bar, LinearLayout picker_menu, int picker_width, int threshold, ChangeLevelCallBacks callBacks){
         mPickerActionBar = picker_action_bar;
         mPickerMenu = picker_menu;
         mPickerWidth = picker_width;
         mThreshold = threshold;
-        mModel = model;
+        mCallBacks = callBacks;
     }
 
     @Override
@@ -109,16 +109,16 @@ public class TribsDragListener implements View.OnTouchListener, View.OnClickList
                 }
                 break;
             case R.id.prevLvl:
-                mModel.decreaseLevel();
+                mCallBacks.decreaseLevel();
                 break;
             case R.id.nextLvl:
-                mModel.increaseLevel();
+                mCallBacks.increaseLevel();
                 break;
             case R.id.quit:
-                mModel.quit();
+                mCallBacks.quit();
                 break;
             case R.id.refresh:
-                mModel.repeatLevel();
+                mCallBacks.repeatLevel();
                 break;
         }
     }
@@ -143,5 +143,17 @@ public class TribsDragListener implements View.OnTouchListener, View.OnClickList
                 .y(-mPickerWidth)
                 .setDuration((long) (animationTime) / 5)
                 .start();
+    }
+
+    public interface ChangeLevelCallBacks{
+        public void increaseLevel();
+
+        public void quit();
+
+        public void repeatLevel();
+
+        public void decreaseLevel();
+
+        public void beatCurrentLevel();
     }
 }
