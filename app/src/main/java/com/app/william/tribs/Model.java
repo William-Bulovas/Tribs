@@ -23,6 +23,8 @@ import java.util.Scanner;
  */
 public class Model {
 
+    // TODO rewrite this file... Inject this via Dagger... Need to rethink how the Model should work
+
     private BoardFragment mView;
     private int mLevel;
     private int numSelected = 0;

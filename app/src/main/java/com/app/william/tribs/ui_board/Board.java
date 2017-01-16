@@ -1,94 +1,62 @@
 package com.app.william.tribs.ui_board;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewConfiguration;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
+import com.app.william.tribs.R;
+import com.app.william.tribs.databinding.ActivityBoardBinding;
 import com.app.william.tribs.ui_level_picker.LevelPickerFragment;
 import com.app.william.tribs.ui_level_picker.LevelPickerPagerAdapter;
-import com.app.william.tribs.Model;
-import com.app.william.tribs.R;
 
 
-public class Board extends ActionBarActivity implements LevelPickerFragment.StartLevelCallBack, StartScreenFragment.StartScreenCallBacks, TribsDragListener.ChangeLevelCallBacks{
+public class Board extends AppCompatActivity implements LevelPickerFragment.StartLevelCallBack, StartScreenFragment.StartScreenCallBacks, TribsDragListener.ChangeLevelCallBacks{
     private static int MAXLEVELS = 17;
 
-    private TextView levelLbl;
     private static String TRIBS_PREFS = "Tribs_Prefs";
-    private LinearLayout picker_menu;
     private int picker_width;
-    private RelativeLayout picker_action_bar;
-    private ViewPager mViewPager;
     private BoardPagerAdapter mBoardPagerAdapter;
-    private ViewPager mPickerPager;
     TribsDragListener mDragListener;
     private int mFarthestLevel;
-    private Button mNextLvl;
-    private Button mPrevLvl;
     private LevelPickerPagerAdapter mLevelPickerPagerAdapter;
+    private ActivityBoardBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_board);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board);
 
         picker_width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
 
-
         getSupportActionBar().hide();
 
-        picker_action_bar = (RelativeLayout) findViewById(R.id.actionbar_picker);
-
-        TextView quit = (TextView) findViewById(R.id.quit);
-        mNextLvl = (Button) findViewById(R.id.nextLvl);
-        mPrevLvl = (Button) findViewById(R.id.prevLvl);
-        Button refresh = (Button) findViewById(R.id.refresh);
-
-        levelLbl = (TextView) findViewById(R.id.lvlTitle);
-
-
-        picker_menu = (LinearLayout) findViewById(R.id.level_picker_menu);
-        picker_menu.setY(-picker_width);
+        mBinding.levelPickerMenu.setY(-picker_width);
 
         final ViewConfiguration vc = ViewConfiguration.get(this);
         final int swipeMinDistance = vc.getScaledPagingTouchSlop();
 
-        mDragListener = new TribsDragListener(picker_action_bar, picker_menu, picker_width, swipeMinDistance / 2, this);
+        mDragListener = new TribsDragListener(mBinding.actionbarPicker, mBinding.levelPickerMenu, picker_width, swipeMinDistance / 2, this);
 
-        levelLbl.setOnTouchListener(mDragListener);
-
-        quit.setOnTouchListener(mDragListener);
-
-        mNextLvl.setOnTouchListener(mDragListener);
-
-        mPrevLvl.setOnTouchListener(mDragListener);
-
-        refresh.setOnTouchListener(mDragListener);
-        picker_action_bar.setOnTouchListener(mDragListener);
-        picker_menu.setOnTouchListener(mDragListener);
-
-
-        mViewPager = (ViewPager) findViewById(R.id.board_pager);
+        mBinding.lvlTitle.setOnTouchListener(mDragListener);
+        mBinding.quit.setOnTouchListener(mDragListener);
+        mBinding.nextLvl.setOnTouchListener(mDragListener);
+        mBinding.prevLvl.setOnTouchListener(mDragListener);
+        mBinding.refresh.setOnTouchListener(mDragListener);
+        mBinding.actionbarPicker.setOnTouchListener(mDragListener);
+        mBinding.levelPickerMenu.setOnTouchListener(mDragListener);
 
         mBoardPagerAdapter = new BoardPagerAdapter(getSupportFragmentManager(), MAXLEVELS);
 
-        mViewPager.setAdapter(mBoardPagerAdapter);
+        mBinding.boardPager.setAdapter(mBoardPagerAdapter);
 
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mBinding.boardPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 BoardFragment frag = mBoardPagerAdapter.getPrimary();
@@ -99,23 +67,23 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
                     if (position == mFarthestLevel + 1) {
                         Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_right_white_24dp);
                         //fadedArrow.setColorFilter(Color.parseColor("#999999"), PorterDuff.Mode.MULTIPLY);
-                        mNextLvl.setBackgroundDrawable(fadedArrow);
-                        mNextLvl.setActivated(false);
+                        mBinding.nextLvl.setBackgroundDrawable(fadedArrow);
+                        mBinding.nextLvl.setActivated(false);
                     } else {
                         Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_right_white_24dp);
-                        mNextLvl.setBackgroundDrawable(fadedArrow);
-                        mNextLvl.setClickable(true);
+                        mBinding.nextLvl.setBackgroundDrawable(fadedArrow);
+                        mBinding.nextLvl.setClickable(true);
                     }
 
                     if (position == 0 || position == 1) {
                         Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp);
                         //fadedArrow.setColorFilter(Color.parseColor("#999999"), PorterDuff.Mode.MULTIPLY);
-                        mPrevLvl.setBackgroundDrawable(fadedArrow);
-                        mPrevLvl.setClickable(false);
+                        mBinding.nextLvl.setBackgroundDrawable(fadedArrow);
+                        mBinding.nextLvl.setClickable(false);
                     } else {
                         Drawable fadedArrow = getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_white_24dp);
-                        mPrevLvl.setBackgroundDrawable(fadedArrow);
-                        mPrevLvl.setClickable(true);
+                        mBinding.prevLvl.setBackgroundDrawable(fadedArrow);
+                        mBinding.prevLvl.setClickable(true);
                     }
                 }
             }
@@ -139,11 +107,10 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
             mFarthestLevel = preferences.getInt("farthest_level", 0);
         }
 
-        mPickerPager = (ViewPager) findViewById(R.id.level_picker_pager);
         mLevelPickerPagerAdapter = new LevelPickerPagerAdapter(getSupportFragmentManager(), MAXLEVELS, mFarthestLevel);
-        mPickerPager.setAdapter(mLevelPickerPagerAdapter);
+        mBinding.levelPickerPager.setAdapter(mLevelPickerPagerAdapter);
 
-        mViewPager.setCurrentItem(mFarthestLevel + 1);
+        mBinding.boardPager.setCurrentItem(mFarthestLevel + 1);
 
         showStartScreen();
     }
@@ -180,19 +147,19 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
 
     public void setTitle(int level) {
         if (level == 0) {
-            levelLbl.setText("Tutorial");
+            mBinding.setTitle("Tutorial");
         } else {
-            levelLbl.setText("Level " + level);
+            mBinding.setTitle("Level " + level);
         }
     }
 
     public void setLevel(int level) {
-        mViewPager.setCurrentItem(level);
+        mBinding.boardPager.setCurrentItem(level);
     }
 
     @Override
     public void startLevel(int i) {
-        mViewPager.setCurrentItem(i);
+        mBinding.boardPager.setCurrentItem(i);
         mDragListener.closePicker(20);
     }
 
@@ -220,8 +187,8 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
 
     @Override
     public void increaseLevel() {
-        if(mViewPager.getCurrentItem() + 1 <= MAXLEVELS && mViewPager.getCurrentItem() + 1 <= mFarthestLevel + 1){
-            setLevel(mViewPager.getCurrentItem() + 1);
+        if(mBinding.boardPager.getCurrentItem() + 1 <= MAXLEVELS && mBinding.boardPager.getCurrentItem() + 1 <= mFarthestLevel + 1){
+            setLevel(mBinding.boardPager.getCurrentItem() + 1);
         }
     }
 
@@ -237,13 +204,13 @@ public class Board extends ActionBarActivity implements LevelPickerFragment.Star
 
     @Override
     public void decreaseLevel() {
-        if(mViewPager.getCurrentItem() - 1 >= 1){
-            setLevel(mViewPager.getCurrentItem() - 1);
+        if(mBinding.boardPager.getCurrentItem() - 1 >= 1){
+            setLevel(mBinding.boardPager.getCurrentItem() - 1);
         }
     }
 
     @Override
     public void beatCurrentLevel() {
-        setFarthest(mViewPager.getCurrentItem());
+        setFarthest(mBinding.boardPager.getCurrentItem());
     }
 }
